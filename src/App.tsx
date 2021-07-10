@@ -20,7 +20,15 @@ function App() {
     });
 
     socket.on("users", (users) => {
-      console.log("-------------", users);
+      users.forEach((user: any) => {
+        user.self = user.userID === socket.id;
+      });
+      users = users.sort((a: any, b: any) => {
+        if (a.self) return -1;
+        if (b.self) return 1;
+        if (a.username < b.username) return -1;
+        return a.username > b.username ? 1 : 0;
+      });
     });
 
     socket.onAny((event, ...args) => {
@@ -44,12 +52,6 @@ function App() {
 
   return (
     <Router>
-      <div className="App">
-        <h1>Hello, welcome in chat app</h1>
-        <p>{msg}</p>
-        <input type="text" ref={inputValue} />
-        <button onClick={sendMessage}>send</button>
-      </div>
       <Switch>
         <Route path="/login" exact>
           <LoginScreen setUserId={setUserId} />
