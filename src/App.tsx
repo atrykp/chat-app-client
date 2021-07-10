@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-import "./App.css";
+import "./App.scss";
 import { useEffect, useRef, useState } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import LoginScreen from "./Screen/Login/LoginScreen";
@@ -54,7 +54,7 @@ function App() {
     <Router>
       <Switch>
         <Route path="/login" exact>
-          <LoginScreen setUserId={setUserId} />
+          <LoginScreen />
         </Route>
       </Switch>
     </Router>

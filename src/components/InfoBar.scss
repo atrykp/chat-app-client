@@ -1,0 +1,17 @@
+.info-bar-wrapper {
+  position: absolute;
+  background-color: rgb(0, 104, 0);
+  top: -100px;
+  left: 0;
+  width: 100%;
+}
+.info-bar-wrapper-warning {
+  @extend .info-bar-wrapper;
+  background-color: rgb(150, 0, 0);
+}
+.info-bar-content {
+  color: white;
+  padding: 5px;
+  text-align: center;
+  font-size: 0.9rem;
+}

@@ -1,25 +1,62 @@
-import React, { useRef } from "react";
-import { useHistory } from "react-router";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import Card from "../../components/Card";
-import style from "./LoginScreen.module.css";
+import InfoBar from "../../components/InfoBar";
+import "./LoginScreen.scss";
 
-interface ILoginScreen {
-  setUserId(data: string): void;
-}
+const LoginScreen = () => {
+  const [currentError, setCurrentError] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-const LoginScreen = ({ setUserId }: ILoginScreen) => {
-  const history = useHistory();
-  const inputValue = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (errors.password && errors.email) {
+      setCurrentError("incorrect data");
+    } else if (errors.password) {
+      setCurrentError("incorrect password");
+    } else if (errors.email) {
+      setCurrentError("incorrect email");
+    } else {
+      setCurrentError("");
+    }
+  }, [errors.email, errors.password]);
+
+  const onSubmit = (data: any) => console.log(data);
+
   return (
-    <div className={style.wrapper}>
+    <div className="login-screen-wrapper">
+      <InfoBar text={currentError} warning isOpen={!!currentError} />
       <Card>
-        <p className={style.title}>Login</p>
-        <form action="" className={style.form}>
-          <input type="text" placeholder="Eail" />
-          <input type="text" placeholder="Password" />
-          <div className={style.buttons}>
-            <button className={style.primary}>Login</button>
-            <button className={style.secondary}>SignUp</button>
+        <p className="login-screen-title">Login</p>
+        <form
+          action=""
+          className="login-screen-form"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <input
+            {...register("email", {
+              required: true,
+              pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            })}
+            type="text"
+            placeholder="Email"
+          />
+          <input
+            {...register("password", {
+              required: true,
+              pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{5,}$/,
+            })}
+            type="password"
+            placeholder="Password"
+          />
+          <div className="login-screen-buttons">
+            <button className="login-screen-primary" type="submit">
+              Login
+            </button>
+            <button className="login-screen-secondary">SignUp</button>
           </div>
         </form>
       </Card>
