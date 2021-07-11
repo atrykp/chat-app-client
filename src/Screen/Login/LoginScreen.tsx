@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useHistory } from "react-router";
 import Card from "../../components/Card";
 import InfoBar from "../../components/InfoBar";
 import "./LoginScreen.scss";
 
 const LoginScreen = () => {
   const [currentError, setCurrentError] = useState("");
+
+  const history = useHistory();
+
   const {
     register,
     handleSubmit,
@@ -16,9 +20,9 @@ const LoginScreen = () => {
     if (errors.password && errors.email) {
       setCurrentError("incorrect data");
     } else if (errors.password) {
-      setCurrentError("incorrect password");
+      setCurrentError("password is required");
     } else if (errors.email) {
-      setCurrentError("incorrect email");
+      setCurrentError("email is required");
     } else {
       setCurrentError("");
     }
@@ -39,7 +43,6 @@ const LoginScreen = () => {
           <input
             {...register("email", {
               required: true,
-              pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
             })}
             type="text"
             placeholder="Email"
@@ -47,7 +50,6 @@ const LoginScreen = () => {
           <input
             {...register("password", {
               required: true,
-              pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{5,}$/,
             })}
             type="password"
             placeholder="Password"
@@ -56,7 +58,13 @@ const LoginScreen = () => {
             <button className="login-screen-primary" type="submit">
               Login
             </button>
-            <button className="login-screen-secondary">SignUp</button>
+            <button
+              type="button"
+              className="login-screen-secondary"
+              onClick={() => history.push("/register")}
+            >
+              SignUp
+            </button>
           </div>
         </form>
       </Card>

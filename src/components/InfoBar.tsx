@@ -3,13 +3,13 @@ import React from "react";
 import { topSlide } from "../utils/consts";
 import "./InfoBar.scss";
 
-interface InfoBar {
+interface IInfoBar {
   text: string;
   warning?: boolean;
   isOpen: boolean;
 }
 
-const InfoBar = ({ text, warning, isOpen }: InfoBar) => {
+const InfoBar = ({ text, warning, isOpen }: IInfoBar) => {
   return (
     <motion.div
       animate={isOpen ? "open" : "closed"}

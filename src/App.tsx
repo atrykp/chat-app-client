@@ -3,6 +3,7 @@ import "./App.scss";
 import { useEffect, useRef, useState } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import LoginScreen from "./Screen/Login/LoginScreen";
+import RegisterScreen from "./Screen/RegisterScreen/RegisterScreen";
 
 const socket = io("http://localhost:5000", { autoConnect: false });
 
@@ -55,6 +56,9 @@ function App() {
       <Switch>
         <Route path="/login" exact>
           <LoginScreen />
+        </Route>
+        <Route path="/register" exact>
+          <RegisterScreen />
         </Route>
       </Switch>
     </Router>
