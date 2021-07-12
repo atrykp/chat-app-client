@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router";
 import Card from "../../components/Card";
+import Button from "../../components/Button";
 import InfoBar from "../../components/InfoBar";
 import "./LoginScreen.scss";
 
@@ -55,16 +56,14 @@ const LoginScreen = () => {
             placeholder="Password"
           />
           <div className="login-screen-buttons">
-            <button className="login-screen-primary" type="submit">
-              Login
-            </button>
-            <button
+            <Button type="submit">Login</Button>
+            <Button
               type="button"
-              className="login-screen-secondary"
-              onClick={() => history.push("/register")}
+              callback={() => history.push("/register")}
+              secondary
             >
               SignUp
-            </button>
+            </Button>
           </div>
         </form>
       </Card>

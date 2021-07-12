@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router";
 
+import Button from "../../components/Button";
+
 interface IRegisterForm {
   setCurrentError(data: string): void;
 }
@@ -67,16 +69,10 @@ const RegisterForm = ({ setCurrentError }: IRegisterForm) => {
         placeholder="Password"
       />
       <div className="register-screen-buttons">
-        <button className="register-screen-primary" type="submit">
-          Register
-        </button>
-        <button
-          type="button"
-          className="register-screen-secondary"
-          onClick={() => history.push("/login")}
-        >
+        <Button type="submit">Register</Button>
+        <Button type="button" callback={() => history.push("/login")} secondary>
           Login
-        </button>
+        </Button>
       </div>
     </form>
   );
