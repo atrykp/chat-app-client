@@ -1,4 +1,6 @@
-interface IListElement {
+import "./ListElement.scss";
+
+export interface IListElement {
   img: string;
   header: string;
   text: string;
@@ -7,10 +9,16 @@ interface IListElement {
 
 const ListElement = ({ img, header, text, status }: IListElement) => {
   return (
-    <li>
-      <div className="user-image"></div>
-      <h1>{header}</h1>
-      <p>{text}</p>
+    <li className="list-element-wrapper">
+      <div className="list-element-image">
+        <div
+          className="user-image"
+          style={{ backgroundImage: `url(${img})` }}
+        ></div>
+      </div>
+
+      <h1 className="list-element-header">{header}</h1>
+      <p className="list-element-paragraph">{text}</p>
       {status && <p>{status}</p>}
     </li>
   );

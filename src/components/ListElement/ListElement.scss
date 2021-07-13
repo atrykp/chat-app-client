@@ -1,0 +1,32 @@
+.list-element-wrapper {
+  display: grid;
+  grid-template-columns: 30% 1fr;
+  grid-template-rows: 60% 40%;
+  height: 15vh;
+  padding: 10px;
+  border-bottom: 1px solid gray;
+}
+.list-element-header {
+  align-self: flex-end;
+  padding-left: 10px;
+}
+.list-element-paragraph {
+  align-self: center;
+  padding-left: 10px;
+}
+.list-element-image {
+  grid-column: 1/2;
+  grid-row: 1/3;
+  display: grid;
+}
+.user-image {
+  width: 80px;
+  height: 80px;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  border-radius: 50%;
+  background-color: black;
+  align-self: center;
+  justify-self: center;
+}
