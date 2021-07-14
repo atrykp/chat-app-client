@@ -2,17 +2,22 @@
   display: grid;
   grid-template-columns: 30% 1fr;
   grid-template-rows: 60% 40%;
-  height: 15vh;
+  min-height: 96px;
+  max-height: 106px;
   padding: 10px;
+
   border-bottom: 1px solid gray;
+  max-width: 370px;
 }
 .list-element-header {
   align-self: flex-end;
   padding-left: 10px;
+  color: #395d75;
 }
 .list-element-paragraph {
-  align-self: center;
+  align-self: flex-start;
   padding-left: 10px;
+  font-size: 0.85rem;
 }
 .list-element-image {
   grid-column: 1/2;
