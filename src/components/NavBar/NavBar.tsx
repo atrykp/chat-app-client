@@ -6,7 +6,7 @@ const NavBar = () => {
     <div className="navbar-wrapper">
       <h1>Chat App</h1>
       <div className="navbar-links-wrapper">
-        <NavLink className="navbar-link" to="/">
+        <NavLink className="navbar-link" to="/conversations">
           Chats
         </NavLink>
         <NavLink className="navbar-link" to="contacts">

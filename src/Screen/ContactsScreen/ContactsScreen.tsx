@@ -1,7 +1,6 @@
-import "./MainScreen.scss";
-import ListTemplate from "../../Template/ListTemplate/ListTemplate";
-import profile from "../../images/profile.jpg";
 import NavBar from "../../components/NavBar/NavBar";
+import profile from "../../images/profile.jpg";
+import ListTemplate from "../../Template/ListTemplate/ListTemplate";
 
 const contacts = [
   { header: "John", text: "hello im new", img: profile },
@@ -9,7 +8,7 @@ const contacts = [
   { header: "John", text: "hello im new", img: profile },
 ];
 
-const MainScreen = () => {
+const ContactsScreen = () => {
   return (
     <>
       <NavBar />
@@ -18,4 +17,4 @@ const MainScreen = () => {
   );
 };
 
-export default MainScreen;
+export default ContactsScreen;

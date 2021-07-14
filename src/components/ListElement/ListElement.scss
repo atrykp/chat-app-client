@@ -5,9 +5,11 @@
   min-height: 96px;
   max-height: 106px;
   padding: 10px;
-
   border-bottom: 1px solid gray;
   max-width: 370px;
+}
+.list-element-wrapper:active {
+  background-color: #ffa600;
 }
 .list-element-header {
   align-self: flex-end;

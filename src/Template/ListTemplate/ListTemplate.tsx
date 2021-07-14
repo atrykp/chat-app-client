@@ -12,7 +12,11 @@ const ListTemplate = ({ listElements }: IListTemplate) => {
   const list = listElements.map((elem) => (
     <ListElement text={elem.text} header={elem.header} img={elem.img} />
   ));
-  return <ul>{list}</ul>;
+  return (
+    <div className="list-template-wrapper">
+      <ul>{list}</ul>
+    </div>
+  );
 };
 
 export default ListTemplate;
