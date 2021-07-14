@@ -5,11 +5,15 @@ import RegisterScreen from "./Screen/RegisterScreen/RegisterScreen";
 
 import ContactsScreen from "./Screen/ContactsScreen/ContactsScreen";
 import ConversationScreen from "./Screen/ConversationScreen/ConversationScreen";
+import ChatScreen from "./Screen/ChatScreen/ChatScreen";
 
 function App() {
   return (
     <Router>
       <Switch>
+        <Route path="/" exact>
+          <ChatScreen />
+        </Route>
         <Route path="/login" exact>
           <LoginScreen />
         </Route>
