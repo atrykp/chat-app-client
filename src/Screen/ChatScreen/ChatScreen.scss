@@ -24,6 +24,8 @@
 .chat-screen-conversation {
   height: 75vh;
   width: 100%;
+  padding: 1%;
+  overflow-y: scroll;
 }
 .chat-screen-form-wrapper {
   height: 15vh;
