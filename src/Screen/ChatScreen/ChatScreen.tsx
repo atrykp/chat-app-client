@@ -24,26 +24,15 @@ const ChatScreen = () => {
   return (
     <div className="chat-screen-wrapper">
       <div className="chat-screen-bar">
-        <button className="chat-bar-button" onClick={() => history.goBack()}>
+        <button
+          className="chat-bar-button"
+          onClick={() => history.push("/conversations")}
+        >
           {"<"}
         </button>
         <p className="chat-bar-header">patryko</p>
       </div>
       <div className="chat-screen-conversation">
-        <Message message={message} />
-        <Message message={message} />
-        <Message message={message} />
-        <Message message={message} />
-        <Message message={message} />
-        <Message message={message} />
-        <Message message={message} />
-        <Message message={message} />
-        <Message message={message} />
-        <Message message={message} />
-        <Message message={message} />
-        <Message message={message} />
-        <Message message={message} />
-        <Message message={message} />
         <Message message={message} />
         <Message message={messageTwo} main />
         <Message message={messageThree} main />

@@ -1,5 +1,10 @@
 import "./App.scss";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Redirect,
+  Route,
+  Switch,
+} from "react-router-dom";
 import LoginScreen from "./Screen/Login/LoginScreen";
 import RegisterScreen from "./Screen/RegisterScreen/RegisterScreen";
 
@@ -11,9 +16,6 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/" exact>
-          <ChatScreen />
-        </Route>
         <Route path="/login" exact>
           <LoginScreen />
         </Route>
@@ -26,6 +28,10 @@ function App() {
         <Route path="/conversations" exact>
           <ConversationScreen />
         </Route>
+        <Route path="/chat" exact>
+          <ChatScreen />
+        </Route>
+        <Redirect to="/conversations" />
       </Switch>
     </Router>
   );
