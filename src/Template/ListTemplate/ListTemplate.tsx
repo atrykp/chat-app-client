@@ -10,7 +10,12 @@ export interface IListTemplate {
 
 const ListTemplate = ({ listElements }: IListTemplate) => {
   const list = listElements.map((elem) => (
-    <ListElement text={elem.text} header={elem.header} img={elem.img} />
+    <ListElement
+      text={elem.text}
+      header={elem.header}
+      img={elem.img}
+      key={elem.header}
+    />
   ));
   return (
     <div className="list-template-wrapper">

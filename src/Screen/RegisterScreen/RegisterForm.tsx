@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { useHistory } from "react-router";
 
 import Button from "../../components/Button";
+import { useAppDispatch } from "../../hooks/redux-hooks";
+import { registerUser } from "../../thunk-actions/user-thunk-actions";
 
 interface IRegisterForm {
   setCurrentError(data: string): void;
@@ -10,7 +12,7 @@ interface IRegisterForm {
 
 const RegisterForm = ({ setCurrentError }: IRegisterForm) => {
   const history = useHistory();
-
+  const dispatch = useAppDispatch();
   const {
     register,
     handleSubmit,
@@ -33,7 +35,7 @@ const RegisterForm = ({ setCurrentError }: IRegisterForm) => {
     }
   }, [errors.email, errors.password, errors.name, setCurrentError]);
   const onSubmit = (data: any) => {
-    console.log(data);
+    dispatch(registerUser(data));
   };
   return (
     <form
@@ -42,7 +44,7 @@ const RegisterForm = ({ setCurrentError }: IRegisterForm) => {
       onSubmit={handleSubmit(onSubmit)}
     >
       <input
-        {...register("name", {
+        {...register("username", {
           required: true,
           minLength: 3,
           validate: (value) => {
@@ -50,7 +52,7 @@ const RegisterForm = ({ setCurrentError }: IRegisterForm) => {
           },
         })}
         type="text"
-        placeholder="Name"
+        placeholder="Username"
       />
       <input
         {...register("email", {
