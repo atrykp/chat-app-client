@@ -5,10 +5,12 @@ import Card from "../../components/Card";
 import Button from "../../components/Button";
 import InfoBar from "../../components/InfoBar";
 import "./LoginScreen.scss";
+import { useAppDispatch } from "../../hooks/redux-hooks";
+import { loginUser } from "../../thunk-actions/user-thunk-actions";
 
 const LoginScreen = () => {
   const [currentError, setCurrentError] = useState("");
-
+  const dispatch = useAppDispatch();
   const history = useHistory();
 
   const {
@@ -29,7 +31,9 @@ const LoginScreen = () => {
     }
   }, [errors.email, errors.password]);
 
-  const onSubmit = (data: any) => console.log(data);
+  const onSubmit = (data: { email: string; password: string }) => {
+    dispatch(loginUser(data));
+  };
 
   return (
     <div className="login-screen-wrapper">

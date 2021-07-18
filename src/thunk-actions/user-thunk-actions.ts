@@ -15,12 +15,37 @@ export const registerUser =
         "http://localhost:5000/user/signup",
         userData
       );
+
       dispatch(
         addUser({
           _id: data._id,
           token: data.token,
           email: data.email,
-          userName: data.username,
+          username: data.username,
+        })
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+interface ILogin {
+  email: string;
+  password: string;
+}
+export const loginUser =
+  (userData: ILogin) => async (dispatch: AppDispatch) => {
+    try {
+      const { data } = await axios.post(
+        "http://localhost:5000/user/login",
+        userData
+      );
+      dispatch(
+        addUser({
+          _id: data._id,
+          token: data.token,
+          email: data.email,
+          username: data.username,
         })
       );
     } catch (error) {
