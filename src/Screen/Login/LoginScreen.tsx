@@ -31,8 +31,9 @@ const LoginScreen = () => {
     }
   }, [errors.email, errors.password]);
 
-  const onSubmit = (data: { email: string; password: string }) => {
-    dispatch(loginUser(data));
+  const onSubmit = async (data: { email: string; password: string }) => {
+    await dispatch(loginUser(data));
+    history.push("/conversations");
   };
 
   return (

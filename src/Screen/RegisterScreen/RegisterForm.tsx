@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useHistory } from "react-router";
 
 import Button from "../../components/Button";
-import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
+import { useAppDispatch } from "../../hooks/redux-hooks";
 import { registerUser } from "../../thunk-actions/user-thunk-actions";
 
 interface IRegisterForm {
@@ -11,7 +11,6 @@ interface IRegisterForm {
 }
 
 const RegisterForm = ({ setCurrentError }: IRegisterForm) => {
-  const userData = useAppSelector((state) => state.user);
   const history = useHistory();
   const dispatch = useAppDispatch();
   const {
@@ -19,10 +18,6 @@ const RegisterForm = ({ setCurrentError }: IRegisterForm) => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-
-  useEffect(() => {
-    console.log(userData);
-  }, [userData]);
 
   useEffect(() => {
     if (errors.password && errors.email && errors.name) {
