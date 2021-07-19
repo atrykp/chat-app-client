@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router";
 
@@ -11,8 +11,11 @@ interface IRegisterForm {
 }
 
 const RegisterForm = ({ setCurrentError }: IRegisterForm) => {
+  const [currentPhoto, setCurrentPhoto] = useState("");
   const history = useHistory();
+  const photoRef = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
+
   const {
     register,
     handleSubmit,
@@ -36,6 +39,13 @@ const RegisterForm = ({ setCurrentError }: IRegisterForm) => {
   }, [errors.email, errors.password, errors.name, setCurrentError]);
   const onSubmit = (data: any) => {
     dispatch(registerUser(data));
+  };
+
+  const handleAddPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value) {
+      const name = e.target.value.split("\\");
+      setCurrentPhoto(name[name.length - 1]);
+    }
   };
   return (
     <form
@@ -70,6 +80,34 @@ const RegisterForm = ({ setCurrentError }: IRegisterForm) => {
         type="password"
         placeholder="Password"
       />
+      <div className="photo-box-input">
+        <label htmlFor="avatar">
+          Profile picture
+          <input
+            onChange={handleAddPhoto}
+            type="file"
+            id="avatar"
+            name="avatar"
+            ref={photoRef}
+            accept="image/png, image/jpeg"
+          />
+        </label>
+        {currentPhoto && (
+          <div className="loaded-photo-box">
+            <h1>{currentPhoto}</h1>
+            <button
+              type="button"
+              onClick={() => {
+                photoRef.current!.value = "";
+                setCurrentPhoto("");
+              }}
+            >
+              x
+            </button>
+          </div>
+        )}
+      </div>
+
       <div className="register-screen-buttons">
         <Button type="submit">Register</Button>
         <Button type="button" callback={() => history.push("/login")} secondary>

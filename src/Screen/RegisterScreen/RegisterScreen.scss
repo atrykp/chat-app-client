@@ -36,3 +36,28 @@
   align-items: center;
   margin-top: 10px;
 }
+.photo-box-input label {
+  color: white;
+  font-size: 1rem;
+}
+.photo-box-input label input {
+  display: none;
+}
+.loaded-photo-box {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  padding: 5px;
+  border-top: 1px solid white;
+  border-bottom: 1px solid white;
+}
+.loaded-photo-box h1 {
+  margin-right: 5%;
+  font-size: 1rem;
+}
+.loaded-photo-box button {
+  width: 30px;
+  border: 1px solid white;
+  background-color: transparent;
+  color: white;
+}
