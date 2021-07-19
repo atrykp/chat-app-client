@@ -38,7 +38,8 @@ const RegisterForm = ({ setCurrentError }: IRegisterForm) => {
     }
   }, [errors.email, errors.password, errors.name, setCurrentError]);
   const onSubmit = (data: any) => {
-    dispatch(registerUser(data));
+    const photo = photoRef.current?.files ? photoRef.current.files[0] : null;
+    dispatch(registerUser(data, photo));
   };
 
   const handleAddPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -9,21 +9,30 @@ interface IRegister {
 }
 
 export const registerUser =
-  (userData: IRegister) => async (dispatch: AppDispatch) => {
+  (userData: IRegister, photoFile: File | null) =>
+  async (dispatch: AppDispatch) => {
     try {
+      const fData = new FormData();
+      if (photoFile) {
+        fData.append("file", photoFile);
+      }
+      fData.append("username", userData.username);
+      fData.append("email", userData.email);
+      fData.append("password", userData.password);
+
       const { data } = await axios.post(
         "http://localhost:5000/user/signup",
-        userData
+        fData
       );
 
-      dispatch(
-        addUser({
-          _id: data._id,
-          token: data.token,
-          email: data.email,
-          username: data.username,
-        })
-      );
+      // dispatch(
+      //   addUser({
+      //     _id: data._id,
+      //     token: data.token,
+      //     email: data.email,
+      //     username: data.username,
+      //   })
+      // );
     } catch (error) {
       console.log(error);
     }
