@@ -7,6 +7,8 @@ export interface IUser {
   username: string;
   email: string;
   token: string;
+  profilePicture: string;
+  description: string;
 }
 
 const initialState: IUser = {
@@ -14,6 +16,8 @@ const initialState: IUser = {
   username: "",
   email: "",
   token: "",
+  profilePicture: "",
+  description: "",
 };
 
 export const userSlice = createSlice({
@@ -24,6 +28,8 @@ export const userSlice = createSlice({
       state._id = action.payload._id;
       state.username = action.payload.username;
       state.email = action.payload.email;
+      state.profilePicture = action.payload.profilePicture;
+      state.description = action.payload.description;
       state.token = action.payload.token;
     },
     removeUser: (state) => {

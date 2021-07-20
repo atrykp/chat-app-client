@@ -24,15 +24,18 @@ export const registerUser =
         "http://localhost:5000/user/signup",
         fData
       );
+      console.log(data);
 
-      // dispatch(
-      //   addUser({
-      //     _id: data._id,
-      //     token: data.token,
-      //     email: data.email,
-      //     username: data.username,
-      //   })
-      // );
+      dispatch(
+        addUser({
+          _id: data._id,
+          token: data.token,
+          email: data.email,
+          username: data.username,
+          profilePicture: data.profilePicture,
+          description: data.description,
+        })
+      );
     } catch (error) {
       console.log(error);
     }
@@ -55,6 +58,8 @@ export const loginUser =
           token: data.token,
           email: data.email,
           username: data.username,
+          profilePicture: data.profilePicture,
+          description: data.description,
         })
       );
     } catch (error) {
