@@ -1,35 +1,54 @@
-import { useHistory, useLocation, useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import Button from "../../components/Button";
 import Message from "../../components/Message/Message";
 import "./ChatScreen.scss";
 import { useAppSelector } from "../../hooks/redux-hooks";
-
-const message = {
-  text: "siemanko co tam u ciebie",
-  date: new Date().toDateString(),
-  sender: "me",
-};
-const messageTwo = {
-  text: "siemanko",
-  date: new Date().toDateString(),
-  sender: "me",
-};
-const messageThree = {
-  text: "u mnie spoko",
-  date: new Date().toDateString(),
-  sender: "me",
-};
+import axios from "axios";
+import { useState } from "react";
 
 const ChatScreen = () => {
   const userInfo = useAppSelector((state) => state.user);
+  const [messagesList, setMessagesList] = useState([]);
   const { id: conversationId } = useParams<{ id: string }>();
   const { isLoading, isError, data } = useQuery("getChat", () =>
     getChat(userInfo.token, conversationId)
   );
   const history = useHistory();
 
-  const getChat = (token: string, id: string) => {};
+  const getChat = async (token: string, id: string) => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const { data } = await axios.get(
+      `http://localhost:5000/message/${id}`,
+      config
+    );
+    showMessages(data);
+    return data;
+  };
+
+  const showMessages = (messages: any) => {
+    const messagesList = messages.map((el: any) => {
+      if (el.sender === userInfo._id) {
+        return (
+          <Message
+            message={{ text: el.text, sender: el.sender, date: el.createdAt }}
+            main
+          />
+        );
+      }
+      return (
+        <Message
+          message={{ text: el.text, sender: el.sender, date: el.createdAt }}
+        />
+      );
+    });
+    setMessagesList(messagesList);
+  };
 
   return (
     <div className="chat-screen-wrapper">
@@ -40,13 +59,9 @@ const ChatScreen = () => {
         >
           {"<"}
         </button>
-        <p className="chat-bar-header">patryko</p>
+        <p className="chat-bar-header">{userInfo.username}</p>
       </div>
-      <div className="chat-screen-conversation">
-        <Message message={message} />
-        <Message message={messageTwo} main />
-        <Message message={messageThree} main />
-      </div>
+      <div className="chat-screen-conversation">{messagesList}</div>
       <div className="chat-screen-form-wrapper">
         <form action="" className="chat-screen-form">
           <input className="chat-screen-form-input"></input>

@@ -24,7 +24,6 @@ export const registerUser =
         "http://localhost:5000/user/signup",
         fData
       );
-      console.log(data);
 
       dispatch(
         addUser({
