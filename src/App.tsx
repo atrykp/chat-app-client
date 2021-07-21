@@ -28,7 +28,7 @@ function App() {
         <Route path="/conversations" exact>
           <ConversationScreen />
         </Route>
-        <Route path="/chat" exact>
+        <Route path="/chat/:id" exact>
           <ChatScreen />
         </Route>
         <Redirect to="/conversations" />

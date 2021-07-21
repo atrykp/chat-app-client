@@ -6,9 +6,10 @@ import "./ListTemplate.scss";
 
 export interface IListTemplate {
   listElements: IListElement[];
+  path?: string;
 }
 
-const ListTemplate = ({ listElements }: IListTemplate) => {
+const ListTemplate = ({ listElements, path }: IListTemplate) => {
   const list = listElements?.map((elem) => (
     <ListElement
       text={elem.text}
@@ -16,6 +17,7 @@ const ListTemplate = ({ listElements }: IListTemplate) => {
       img={elem.img}
       _id={elem._id}
       key={elem.username}
+      path={path}
     />
   ));
   return (

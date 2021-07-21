@@ -43,7 +43,6 @@ const ConversationScreen = () => {
             key: data.user.username,
             _id: data.user._id,
           };
-          console.log(userObj);
 
           return userObj;
         })
@@ -60,7 +59,7 @@ const ConversationScreen = () => {
       {isLoading && <h1 style={{ position: "absolute" }}>loading</h1>}
       {isError && <h1 style={{ position: "absolute" }}>error</h1>}
 
-      <ListTemplate listElements={data!} />
+      <ListTemplate listElements={data!} path="chat" />
     </div>
   );
 };

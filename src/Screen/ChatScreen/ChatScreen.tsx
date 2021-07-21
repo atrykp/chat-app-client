@@ -1,7 +1,9 @@
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
+import { useQuery } from "react-query";
 import Button from "../../components/Button";
 import Message from "../../components/Message/Message";
 import "./ChatScreen.scss";
+import { useAppSelector } from "../../hooks/redux-hooks";
 
 const message = {
   text: "siemanko co tam u ciebie",
@@ -20,7 +22,15 @@ const messageThree = {
 };
 
 const ChatScreen = () => {
+  const userInfo = useAppSelector((state) => state.user);
+  const { id: conversationId } = useParams<{ id: string }>();
+  const { isLoading, isError, data } = useQuery("getChat", () =>
+    getChat(userInfo.token, conversationId)
+  );
   const history = useHistory();
+
+  const getChat = (token: string, id: string) => {};
+
   return (
     <div className="chat-screen-wrapper">
       <div className="chat-screen-bar">
