@@ -3,9 +3,9 @@ import profile from "../../images/profile.jpg";
 import ListTemplate from "../../Template/ListTemplate/ListTemplate";
 
 const contacts = [
-  { header: "John", text: "hello im new", img: profile },
-  { header: "John", text: "hello im new", img: profile },
-  { header: "John", text: "hello im new", img: profile },
+  { username: "John", text: "hello im new", img: profile },
+  { username: "John", text: "hello im new", img: profile },
+  { username: "John", text: "hello im new", img: profile },
 ];
 
 const ContactsScreen = () => {

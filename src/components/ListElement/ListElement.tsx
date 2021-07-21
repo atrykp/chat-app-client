@@ -2,14 +2,15 @@ import "./ListElement.scss";
 
 export interface IListElement {
   img: string;
-  header: string;
+  username: string;
   text: string;
   status?: "online" | "offline";
+  _id?: string;
 }
 
-const ListElement = ({ img, header, text, status }: IListElement) => {
+const ListElement = ({ img, username, text, status, _id }: IListElement) => {
   return (
-    <li className="list-element-wrapper">
+    <li className="list-element-wrapper" onClick={() => console.log(_id)}>
       <div className="list-element-image">
         <div
           className="user-image"
@@ -17,7 +18,7 @@ const ListElement = ({ img, header, text, status }: IListElement) => {
         ></div>
       </div>
 
-      <h1 className="list-element-header">{header}</h1>
+      <h1 className="list-element-header">{username}</h1>
       <p className="list-element-paragraph">{text}</p>
       {status && <p>{status}</p>}
     </li>

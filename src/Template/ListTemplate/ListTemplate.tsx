@@ -9,12 +9,13 @@ export interface IListTemplate {
 }
 
 const ListTemplate = ({ listElements }: IListTemplate) => {
-  const list = listElements.map((elem) => (
+  const list = listElements?.map((elem) => (
     <ListElement
       text={elem.text}
-      header={elem.header}
+      username={elem.username}
       img={elem.img}
-      key={elem.header}
+      _id={elem._id}
+      key={elem.username}
     />
   ));
   return (
