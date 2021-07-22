@@ -15,7 +15,7 @@ const ListTemplate = ({ listElements, path }: IListTemplate) => {
       text={elem.text}
       username={elem.username}
       img={elem.img}
-      _id={elem._id}
+      conversationId={elem.conversationId}
       key={elem.username}
       path={path}
     />

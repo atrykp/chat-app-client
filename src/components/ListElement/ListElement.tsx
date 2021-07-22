@@ -6,7 +6,7 @@ export interface IListElement {
   username: string;
   text: string;
   status?: "online" | "offline";
-  _id?: string;
+  conversationId?: string;
   path?: string;
 }
 
@@ -15,14 +15,14 @@ const ListElement = ({
   username,
   text,
   status,
-  _id,
+  conversationId,
   path,
 }: IListElement) => {
   const history = useHistory();
   return (
     <li
       className="list-element-wrapper"
-      onClick={() => history.push(`${path}/${_id}`)}
+      onClick={() => history.push(`${path}/${conversationId}`)}
     >
       <div className="list-element-image">
         <div

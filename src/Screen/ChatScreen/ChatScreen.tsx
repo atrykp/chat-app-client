@@ -13,12 +13,7 @@ type Inputs = {
 };
 
 const ChatScreen = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<Inputs>();
+  const { register, handleSubmit, reset } = useForm<Inputs>();
   const userInfo = useAppSelector((state) => state.user);
   const [messagesList, setMessagesList] = useState([]);
   const { id: conversationId } = useParams<{ id: string }>();
@@ -47,6 +42,7 @@ const ChatScreen = () => {
       if (el.sender === userInfo._id) {
         return (
           <Message
+            key={el._id}
             message={{ text: el.text, sender: el.sender, date: el.createdAt }}
             main
           />
@@ -54,14 +50,29 @@ const ChatScreen = () => {
       }
       return (
         <Message
+          key={el._id}
           message={{ text: el.text, sender: el.sender, date: el.createdAt }}
         />
       );
     });
     setMessagesList(messagesList);
   };
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
+  const sendMessage: SubmitHandler<Inputs> = async (data) => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+    try {
+      await axios.post(
+        `http://localhost:5000/message`,
+        { conversationId, text: data.textInput },
+        config
+      );
+    } catch (error) {
+      throw new Error("couldnt send message");
+    }
     reset();
   };
 
@@ -81,7 +92,7 @@ const ChatScreen = () => {
         <form
           action=""
           className="chat-screen-form"
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(sendMessage)}
         >
           <input
             className="chat-screen-form-input"

@@ -42,6 +42,7 @@ const ConversationScreen = () => {
             img: data.user.profilePicture,
             key: data.user.username,
             _id: data.user._id,
+            conversationId: element._id,
           };
 
           return userObj;
