@@ -31,19 +31,11 @@ const ChatScreen = () => {
 
   const showMessages = (messages: any) => {
     const messagesList = messages.map((el: any) => {
-      if (el.sender === userInfo._id) {
-        return (
-          <Message
-            key={el._id}
-            message={{ text: el.text, sender: el.sender, date: el.createdAt }}
-            main
-          />
-        );
-      }
       return (
         <Message
           key={el._id}
           message={{ text: el.text, sender: el.sender, date: el.createdAt }}
+          main={el.sender === userInfo._id}
         />
       );
     });
