@@ -5,8 +5,8 @@ import Button from "../../components/Button";
 import Message from "../../components/Message/Message";
 import "./ChatScreen.scss";
 import { useAppSelector } from "../../hooks/redux-hooks";
-import axios from "axios";
 import { useState } from "react";
+import { useAxios } from "../../hooks/useAxios";
 
 type Inputs = {
   textInput: string;
@@ -20,19 +20,11 @@ const ChatScreen = () => {
   const { isLoading, isError, data } = useQuery("getChat", () =>
     getChat(userInfo.token, conversationId)
   );
+  const { authAxiosGet, authAxiosPost } = useAxios(userInfo.token);
   const history = useHistory();
 
   const getChat = async (token: string, id: string) => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    };
-    const { data } = await axios.get(
-      `http://localhost:5000/message/${id}`,
-      config
-    );
+    const { data } = await authAxiosGet(`http://localhost:5000/message/${id}`);
     showMessages(data);
     return data;
   };
@@ -58,18 +50,11 @@ const ChatScreen = () => {
     setMessagesList(messagesList);
   };
   const sendMessage: SubmitHandler<Inputs> = async (data) => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    };
     try {
-      await axios.post(
-        `http://localhost:5000/message`,
-        { conversationId, text: data.textInput },
-        config
-      );
+      await authAxiosPost(`http://localhost:5000/message`, {
+        conversationId,
+        text: data.textInput,
+      });
     } catch (error) {
       throw new Error("couldnt send message");
     }
