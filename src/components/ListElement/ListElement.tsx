@@ -4,7 +4,7 @@ import "./ListElement.scss";
 export interface IListElement {
   img: string;
   username: string;
-  text: string;
+  text?: string;
   status?: "online" | "offline";
   conversationId?: string;
   path?: string;
