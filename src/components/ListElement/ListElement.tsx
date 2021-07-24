@@ -1,4 +1,5 @@
 import { useHistory } from "react-router";
+import { callbackify } from "util";
 import "./ListElement.scss";
 
 export interface IListElement {
@@ -8,6 +9,7 @@ export interface IListElement {
   status?: "online" | "offline";
   conversationId?: string;
   path?: string;
+  callback?(): void;
 }
 
 const ListElement = ({
@@ -17,12 +19,15 @@ const ListElement = ({
   status,
   conversationId,
   path,
+  callback,
 }: IListElement) => {
   const history = useHistory();
   return (
     <li
       className="list-element-wrapper"
-      onClick={() => history.push(`${path}/${conversationId}`)}
+      onClick={() =>
+        callback ? callback() : history.push(`${path}/${conversationId}`)
+      }
     >
       <div className="list-element-image">
         <div

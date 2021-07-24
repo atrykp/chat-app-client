@@ -1,4 +1,5 @@
 import { FormEvent, useRef, useState } from "react";
+import { useHistory } from "react-router";
 import ListElement from "../../components/ListElement/ListElement";
 import NavBar from "../../components/NavBar/NavBar";
 import { useAppSelector } from "../../hooks/redux-hooks";
@@ -18,8 +19,9 @@ const ContactsScreen = () => {
   const [isSearchActive, setIsSearchActive] = useState(true);
   const searchRef = useRef<HTMLInputElement>(null);
   const userInfo = useAppSelector((state) => state.user);
-  const { authAxiosGet } = useAxios(userInfo.token);
+  const { authAxiosGet, authAxiosPost } = useAxios(userInfo.token);
   const [usersList, setUsersList] = useState<IUserElement[]>([]);
+  const history = useHistory();
 
   const handleSearch = async (e: FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -28,6 +30,13 @@ const ContactsScreen = () => {
     );
     if (!!data.length) {
       const users = data.map((element: IUserElement) => {
+        const createConversation = async () => {
+          const conversation = await authAxiosPost(
+            "http://localhost:5000/conversations",
+            { member: _id }
+          );
+          history.push(`chat/${conversation.data._id}`);
+        };
         const { userName, _id, profilePicture } = element;
         return (
           <ListElement
@@ -35,6 +44,7 @@ const ContactsScreen = () => {
             username={userName}
             conversationId={_id}
             img={profilePicture}
+            callback={createConversation}
           />
         );
       });
