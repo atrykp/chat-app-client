@@ -11,8 +11,11 @@ import RegisterScreen from "./Screen/RegisterScreen/RegisterScreen";
 import ContactsScreen from "./Screen/ContactsScreen/ContactsScreen";
 import ConversationScreen from "./Screen/ConversationScreen/ConversationScreen";
 import ChatScreen from "./Screen/ChatScreen/ChatScreen";
+import { io } from "socket.io-client";
 
 function App() {
+  const socket = io("http://localhost:5000");
+  socket.on("hello", (message) => console.log(message));
   return (
     <Router>
       <Switch>

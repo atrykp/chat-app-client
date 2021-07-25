@@ -1,5 +1,4 @@
 import { useHistory } from "react-router";
-import { callbackify } from "util";
 import "./ListElement.scss";
 
 export interface IListElement {
