@@ -1,7 +1,7 @@
 import React from "react";
 import "./Message.scss";
 
-interface IMessage {
+export interface IMessage {
   message: {
     text: string;
     date: string;

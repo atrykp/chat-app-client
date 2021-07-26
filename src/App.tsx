@@ -12,10 +12,16 @@ import ContactsScreen from "./Screen/ContactsScreen/ContactsScreen";
 import ConversationScreen from "./Screen/ConversationScreen/ConversationScreen";
 import ChatScreen from "./Screen/ChatScreen/ChatScreen";
 import { io } from "socket.io-client";
+import { useEffect, useRef } from "react";
+import { Socket } from "dgram";
+import { DefaultEventsMap } from "socket.io-client/build/typed-events";
 
 function App() {
-  const socket = io("http://localhost:5000");
-  socket.on("hello", (message) => console.log(message));
+  const socketRef = useRef<any>(null);
+  useEffect(() => {
+    socketRef.current = io("http://localhost:5000");
+    socketRef.current.on("hello", (message: string) => console.log(message));
+  }, []);
   return (
     <Router>
       <Switch>
@@ -32,7 +38,7 @@ function App() {
           <ConversationScreen />
         </Route>
         <Route path="/chat/:id" exact>
-          <ChatScreen />
+          <ChatScreen socket={socketRef.current} />
         </Route>
         <Redirect to="/conversations" />
       </Switch>

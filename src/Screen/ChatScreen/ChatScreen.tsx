@@ -2,20 +2,35 @@ import { useHistory, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Button from "../../components/Button";
-import Message from "../../components/Message/Message";
+import Message, { IMessage } from "../../components/Message/Message";
 import "./ChatScreen.scss";
 import { useAppSelector } from "../../hooks/redux-hooks";
 import { useState } from "react";
 import { useAxios } from "../../hooks/useAxios";
+import { Socket } from "dgram";
 
 type Inputs = {
   textInput: string;
 };
 
-const ChatScreen = () => {
+interface IMessageObj {
+  conversationId: string;
+  createdAt: string;
+  sender: string;
+  text: string;
+  updatedAt: string;
+  _id: string;
+  __v?: number;
+}
+
+interface IChatScreen {
+  socket: Socket;
+}
+
+const ChatScreen = ({ socket }: IChatScreen) => {
   const { register, handleSubmit, reset } = useForm<Inputs>();
   const userInfo = useAppSelector((state) => state.user);
-  const [messagesList, setMessagesList] = useState([]);
+  const [messagesList, setMessagesList] = useState<any[]>([]);
   const { id: conversationId } = useParams<{ id: string }>();
   const { isLoading, isError, data } = useQuery("getChat", () =>
     getChat(userInfo.token, conversationId)
@@ -41,7 +56,21 @@ const ChatScreen = () => {
     });
     setMessagesList(messagesList);
   };
+  const createMessage = (message: any) => {
+    return (
+      <Message
+        key={Math.random().toString()}
+        message={{
+          text: message.textInput,
+          sender: userInfo._id,
+          date: new Date().toLocaleDateString(),
+        }}
+        main={true}
+      />
+    );
+  };
   const sendMessage: SubmitHandler<Inputs> = async (data) => {
+    setMessagesList([...messagesList, createMessage(data)]);
     try {
       await authAxiosPost(`http://localhost:5000/message`, {
         conversationId,
