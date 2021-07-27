@@ -12,25 +12,31 @@ import ContactsScreen from "./Screen/ContactsScreen/ContactsScreen";
 import ConversationScreen from "./Screen/ConversationScreen/ConversationScreen";
 import ChatScreen from "./Screen/ChatScreen/ChatScreen";
 import { io } from "socket.io-client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppSelector } from "./hooks/redux-hooks";
 
 function App() {
   const userInfo = useAppSelector((state) => state.user);
   const socketRef = useRef<any>(null);
+  const [socket, setSocket] = useState<any>();
 
   useEffect(() => {
     if (!userInfo._id) return;
-    socketRef.current = io("http://localhost:5000");
-    socketRef.current.on("hello", (message: string) => {
+    console.log("zmieniło się user info");
+
+    setSocket(io("http://localhost:5000"));
+  }, [userInfo._id]);
+
+  useEffect(() => {
+    if (!socket) return;
+    socket.on("hello", (message: string) => {
       console.log(message);
     });
-    socketRef.current.emit("userId", userInfo._id);
-    socketRef.current.on(
-      "usersOnline",
-      (users: { userId: string; socketId: string }[]) => console.log(users)
+    socket.emit("userId", userInfo._id);
+    socket.on("usersOnline", (users: { userId: string; socketId: string }[]) =>
+      console.log(users)
     );
-  }, [userInfo._id]);
+  }, [socket, userInfo._id]);
 
   return (
     <Router>
@@ -48,7 +54,7 @@ function App() {
           <ConversationScreen />
         </Route>
         <Route path="/chat/:id/:receiverName" exact>
-          <ChatScreen socket={socketRef.current} />
+          <ChatScreen socket={socket} />
         </Route>
         <Redirect to="/conversations" />
       </Switch>

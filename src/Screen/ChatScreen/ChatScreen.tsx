@@ -5,7 +5,7 @@ import Button from "../../components/Button";
 import Message from "../../components/Message/Message";
 import "./ChatScreen.scss";
 import { useAppSelector } from "../../hooks/redux-hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAxios } from "../../hooks/useAxios";
 import { Socket } from "dgram";
 
@@ -65,6 +65,16 @@ const ChatScreen = ({ socket }: IChatScreen) => {
     const currentMessage = { ...data, _id: userInfo._id };
     setMessagesList([...messagesList, createMessage(currentMessage)]);
 
+    const { data: receiverInfo } = await authAxiosGet(
+      `http://localhost:5000/user/username/${receiverName}`
+    );
+    console.log(receiverInfo[0]);
+    socket.emit("sendMessage", {
+      message: data.textInput,
+      receiverId: receiverInfo[0]._id,
+      senderId: userInfo._id,
+    });
+
     try {
       await authAxiosPost(`http://localhost:5000/message`, {
         conversationId,
@@ -75,6 +85,10 @@ const ChatScreen = ({ socket }: IChatScreen) => {
     }
     reset();
   };
+
+  useEffect(() => {
+    socket?.on("getMessage", (message) => console.log(message));
+  }, [socket]);
 
   return (
     <div className="chat-screen-wrapper">
