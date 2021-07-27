@@ -9,43 +9,40 @@ import { useAxios } from "../../hooks/useAxios";
 const ConversationScreen = () => {
   const userInfo = useAppSelector((state) => state.user);
   const { isLoading, isError, data } = useQuery("getConversations", () =>
-    getConversations(userInfo.token)
+    getConversations()
   );
   const { authAxiosGet } = useAxios(userInfo.token);
 
-  const getConversations = useCallback(
-    async (token: string) => {
-      const { data } = await authAxiosGet(
-        "http://localhost:5000/conversations"
-      );
+  const getConversations = useCallback(async () => {
+    const { data } = await authAxiosGet("http://localhost:5000/conversations");
 
-      const configList: IListElement[] = await Promise.all(
-        data.map(async (element: any) => {
-          const [user] = element.members.filter(
-            (elem: string) => elem !== userInfo._id
-          );
+    const configList: IListElement[] = await Promise.all(
+      data.map(async (element: any) => {
+        const [user] = element.members.filter((elem: string) => {
+          console.log(elem);
 
-          const { data } = await authAxiosGet(
-            `http://localhost:5000/user/${user}`
-          );
+          return elem !== userInfo._id;
+        });
 
-          const userObj = {
-            username: data.user.username,
-            text: data.user.description,
-            img: data.user.profilePicture,
-            key: data.user.username,
-            _id: data.user._id,
-            conversationId: element._id,
-          };
+        const { data } = await authAxiosGet(
+          `http://localhost:5000/user/${user}`
+        );
 
-          return userObj;
-        })
-      );
+        const userObj = {
+          username: data.user.username,
+          text: data.user.description,
+          img: data.user.profilePicture,
+          key: data.user.username,
+          _id: data.user._id,
+          conversationId: element._id,
+        };
 
-      return configList;
-    },
-    [userInfo._id, authAxiosGet]
-  );
+        return userObj;
+      })
+    );
+
+    return configList;
+  }, [userInfo._id, authAxiosGet]);
 
   return (
     <div>

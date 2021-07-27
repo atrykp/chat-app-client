@@ -25,7 +25,9 @@ const ListElement = ({
     <li
       className="list-element-wrapper"
       onClick={() =>
-        callback ? callback() : history.push(`${path}/${conversationId}`)
+        callback
+          ? callback()
+          : history.push(`${path}/${conversationId}/${username}`)
       }
     >
       <div className="list-element-image">

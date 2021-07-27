@@ -47,7 +47,7 @@ function App() {
         <Route path="/conversations" exact>
           <ConversationScreen />
         </Route>
-        <Route path="/chat/:id" exact>
+        <Route path="/chat/:id/:receiverName" exact>
           <ChatScreen socket={socketRef.current} />
         </Route>
         <Redirect to="/conversations" />

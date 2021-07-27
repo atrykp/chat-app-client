@@ -22,6 +22,7 @@ const ChatScreen = ({ socket }: IChatScreen) => {
   const userInfo = useAppSelector((state) => state.user);
   const [messagesList, setMessagesList] = useState<any[]>([]);
   const { id: conversationId } = useParams<{ id: string }>();
+  const { receiverName } = useParams<{ receiverName: string }>();
   const { isLoading, isError, data } = useQuery("getChat", () =>
     getChat(userInfo.token, conversationId)
   );
@@ -84,7 +85,7 @@ const ChatScreen = ({ socket }: IChatScreen) => {
         >
           {"<"}
         </button>
-        <p className="chat-bar-header">{userInfo.username}</p>
+        <p className="chat-bar-header">{receiverName}</p>
       </div>
       <div className="chat-screen-conversation">{messagesList}</div>
       <div className="chat-screen-form-wrapper">
