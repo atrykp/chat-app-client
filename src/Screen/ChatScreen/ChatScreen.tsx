@@ -5,7 +5,7 @@ import Button from "../../components/Button";
 import Message from "../../components/Message/Message";
 import "./ChatScreen.scss";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAxios } from "../../hooks/useAxios";
 import { Socket } from "dgram";
 import { removeUser } from "../../store/slices/userSlice";
@@ -16,6 +16,11 @@ type Inputs = {
 
 interface IChatScreen {
   socket: Socket;
+}
+
+interface newMessage {
+  _id: string;
+  textInput: string;
 }
 
 const ChatScreen = ({ socket }: IChatScreen) => {
@@ -50,22 +55,30 @@ const ChatScreen = ({ socket }: IChatScreen) => {
     setMessagesList(messagesList);
   };
 
-  const createMessage = (message: any) => {
-    return (
-      <Message
-        key={Math.random().toString()}
-        message={{
-          text: message.textInput,
-          sender: message._id,
-          date: new Date().toLocaleDateString(),
-        }}
-        main={message._id === userInfo._id}
-      />
-    );
-  };
+  const createMessage = useCallback(
+    (message: any) => {
+      return (
+        <Message
+          key={Math.random().toString()}
+          message={{
+            text: message.textInput,
+            sender: message._id,
+            date: new Date().toLocaleDateString(),
+          }}
+          main={message._id === userInfo._id}
+        />
+      );
+    },
+    [userInfo._id]
+  );
+  const addNewMessage = useCallback(
+    (message: newMessage) => {
+      setMessagesList([...messagesList, createMessage(message)]);
+    },
+    [createMessage, messagesList]
+  );
   const sendMessage: SubmitHandler<Inputs> = async (data) => {
-    const currentMessage = { ...data, _id: userInfo._id };
-    setMessagesList([...messagesList, createMessage(currentMessage)]);
+    addNewMessage({ textInput: data.textInput, _id: userInfo._id });
     try {
       const { data: receiverInfo } = await authAxiosGet(
         `http://localhost:5000/user/username/${receiverName}`
@@ -75,6 +88,7 @@ const ChatScreen = ({ socket }: IChatScreen) => {
         message: data.textInput,
         receiverId: receiverInfo[0]._id,
         senderId: userInfo._id,
+        date: new Date().toLocaleDateString(),
       });
 
       await authAxiosPost(`http://localhost:5000/message`, {
@@ -90,16 +104,18 @@ const ChatScreen = ({ socket }: IChatScreen) => {
 
   useEffect(() => {
     if (!socket) return;
-    socket.on("getMessage", (message) => console.log(message));
+    socket.on("getMessage", (message) => {
+      addNewMessage({ textInput: message.message, _id: message.senderId });
+    });
     return () => {
       socket.removeAllListeners("getMessage");
     };
-  }, [socket]);
+  }, [socket, addNewMessage]);
 
   useEffect(() => {
     if (isError) {
       dispatch(removeUser());
-      history.push("./login");
+      history.push("/login");
     }
   }, [isError, dispatch, history]);
 

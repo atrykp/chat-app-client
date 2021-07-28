@@ -57,7 +57,7 @@ const ContactsScreen = () => {
       }
     } catch (error) {
       dispatch(removeUser());
-      history.push("./login");
+      history.push("/login");
     }
   };
   const closeSearch = () => {

@@ -23,8 +23,6 @@ const ConversationScreen = () => {
     const configList: IListElement[] = await Promise.all(
       data.map(async (element: any) => {
         const [user] = element.members.filter((elem: string) => {
-          console.log(elem);
-
           return elem !== userInfo._id;
         });
 
@@ -51,7 +49,7 @@ const ConversationScreen = () => {
   useEffect(() => {
     if (isError) {
       dispatch(removeUser());
-      history.push("./login");
+      history.push("/login");
     }
   }, [isError, dispatch, history]);
 
