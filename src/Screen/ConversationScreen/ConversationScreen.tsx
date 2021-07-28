@@ -1,12 +1,16 @@
 import NavBar from "../../components/NavBar/NavBar";
 import ListTemplate from "../../Template/ListTemplate/ListTemplate";
-import { useAppSelector } from "../../hooks/redux-hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import { useQuery } from "react-query";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { IListElement } from "../../components/ListElement/ListElement";
 import { useAxios } from "../../hooks/useAxios";
+import { useHistory } from "react-router";
+import { removeUser } from "../../store/slices/userSlice";
 
 const ConversationScreen = () => {
+  const dispatch = useAppDispatch();
+  const history = useHistory();
   const userInfo = useAppSelector((state) => state.user);
   const { isLoading, isError, data } = useQuery("getConversations", () =>
     getConversations()
@@ -43,6 +47,13 @@ const ConversationScreen = () => {
 
     return configList;
   }, [userInfo._id, authAxiosGet]);
+
+  useEffect(() => {
+    if (isError) {
+      dispatch(removeUser());
+      history.push("./login");
+    }
+  }, [isError, dispatch, history]);
 
   return (
     <div>

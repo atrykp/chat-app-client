@@ -4,10 +4,11 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import Button from "../../components/Button";
 import Message from "../../components/Message/Message";
 import "./ChatScreen.scss";
-import { useAppSelector } from "../../hooks/redux-hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import { useEffect, useState } from "react";
 import { useAxios } from "../../hooks/useAxios";
 import { Socket } from "dgram";
+import { removeUser } from "../../store/slices/userSlice";
 
 type Inputs = {
   textInput: string;
@@ -18,6 +19,7 @@ interface IChatScreen {
 }
 
 const ChatScreen = ({ socket }: IChatScreen) => {
+  const dispatch = useAppDispatch();
   const { register, handleSubmit, reset } = useForm<Inputs>();
   const userInfo = useAppSelector((state) => state.user);
   const [messagesList, setMessagesList] = useState<any[]>([]);
@@ -64,31 +66,42 @@ const ChatScreen = ({ socket }: IChatScreen) => {
   const sendMessage: SubmitHandler<Inputs> = async (data) => {
     const currentMessage = { ...data, _id: userInfo._id };
     setMessagesList([...messagesList, createMessage(currentMessage)]);
-
-    const { data: receiverInfo } = await authAxiosGet(
-      `http://localhost:5000/user/username/${receiverName}`
-    );
-    console.log(receiverInfo[0]);
-    socket.emit("sendMessage", {
-      message: data.textInput,
-      receiverId: receiverInfo[0]._id,
-      senderId: userInfo._id,
-    });
-
     try {
+      const { data: receiverInfo } = await authAxiosGet(
+        `http://localhost:5000/user/username/${receiverName}`
+      );
+
+      socket.emit("sendMessage", {
+        message: data.textInput,
+        receiverId: receiverInfo[0]._id,
+        senderId: userInfo._id,
+      });
+
       await authAxiosPost(`http://localhost:5000/message`, {
         conversationId,
         text: data.textInput,
       });
     } catch (error) {
+      dispatch(removeUser());
       throw new Error("couldnt send message");
     }
     reset();
   };
 
   useEffect(() => {
-    socket?.on("getMessage", (message) => console.log(message));
+    if (!socket) return;
+    socket.on("getMessage", (message) => console.log(message));
+    return () => {
+      socket.removeAllListeners("getMessage");
+    };
   }, [socket]);
+
+  useEffect(() => {
+    if (isError) {
+      dispatch(removeUser());
+      history.push("./login");
+    }
+  }, [isError, dispatch, history]);
 
   return (
     <div className="chat-screen-wrapper">

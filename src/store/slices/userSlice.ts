@@ -33,7 +33,12 @@ export const userSlice = createSlice({
       state.token = action.payload.token;
     },
     removeUser: (state) => {
-      state = initialState;
+      state._id = initialState._id;
+      state.username = initialState.username;
+      state.email = initialState.email;
+      state.profilePicture = initialState.profilePicture;
+      state.description = initialState.description;
+      state.token = initialState.token;
     },
   },
 });
