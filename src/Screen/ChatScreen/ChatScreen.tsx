@@ -5,7 +5,7 @@ import Button from "../../components/Button";
 import Message from "../../components/Message/Message";
 import "./ChatScreen.scss";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAxios } from "../../hooks/useAxios";
 import { Socket } from "dgram";
 import { removeUser } from "../../store/slices/userSlice";
@@ -30,6 +30,7 @@ const ChatScreen = ({ socket }: IChatScreen) => {
   const [messagesList, setMessagesList] = useState<any[]>([]);
   const { id: conversationId } = useParams<{ id: string }>();
   const { receiverName } = useParams<{ receiverName: string }>();
+  const scrollRef = useRef<HTMLDivElement>(null);
   const { isLoading, isError, data } = useQuery("getChat", () =>
     getChat(userInfo.token, conversationId)
   );
@@ -45,11 +46,13 @@ const ChatScreen = ({ socket }: IChatScreen) => {
   const showMessages = (messages: any) => {
     const messagesList = messages.map((el: any) => {
       return (
-        <Message
-          key={el._id}
-          message={{ text: el.text, sender: el.sender, date: el.createdAt }}
-          main={el.sender === userInfo._id}
-        />
+        <div ref={scrollRef} key={`div${el._id}`}>
+          <Message
+            key={el._id}
+            message={{ text: el.text, sender: el.sender, date: el.createdAt }}
+            main={el.sender === userInfo._id}
+          />
+        </div>
       );
     });
     setMessagesList(messagesList);
@@ -118,6 +121,10 @@ const ChatScreen = ({ socket }: IChatScreen) => {
       history.push("/login");
     }
   }, [isError, dispatch, history]);
+
+  useEffect(() => {
+    scrollRef?.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messagesList]);
 
   return (
     <div className="chat-screen-wrapper">
