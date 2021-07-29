@@ -1,0 +1,24 @@
+.start-screen-wrapper {
+  background-color: #395d75;
+  width: 100%;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 30% 15% 5% 15%;
+  justify-items: center;
+  align-content: center;
+}
+
+.start-screen-header {
+  font-size: 3rem;
+  color: whitesmoke;
+}
+.start-screen-paragraph {
+  color: whitesmoke;
+  font-size: 1.1rem;
+}
+
+.start-screen-signup {
+  background-color: transparent;
+  text-decoration: underline;
+  color: whitesmoke;
+}

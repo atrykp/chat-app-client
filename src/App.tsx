@@ -14,6 +14,7 @@ import ChatScreen from "./Screen/ChatScreen/ChatScreen";
 import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
 import { useAppSelector } from "./hooks/redux-hooks";
+import StartScreen from "./Screen/StartScreen/StartScreen";
 
 function App() {
   const userInfo = useAppSelector((state) => state.user);
@@ -38,6 +39,9 @@ function App() {
   return (
     <Router>
       <Switch>
+        <Route path="/" exact>
+          <StartScreen />
+        </Route>
         <Route path="/login" exact>
           <LoginScreen />
         </Route>
@@ -53,7 +57,7 @@ function App() {
         <Route path="/chat/:id/:receiverName" exact>
           <ChatScreen socket={socket} />
         </Route>
-        <Redirect to="/conversations" />
+        <Redirect to="/" />
       </Switch>
     </Router>
   );
