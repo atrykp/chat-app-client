@@ -1,10 +1,14 @@
 import "./NavBar.scss";
-import { NavLink } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
+import { useAppSelector } from "../../hooks/redux-hooks";
 
 const NavBar = () => {
+  const userInfo = useAppSelector((state) => state.user);
+  const history = useHistory();
   return (
     <div className="navbar-wrapper">
       <h1>Chat App</h1>
+      <div className="navbar-user-icon" onClick={() => history.push("/")}></div>
       <div className="navbar-links-wrapper">
         <NavLink className="navbar-link" to="/conversations">
           Chats

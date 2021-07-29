@@ -118,7 +118,7 @@ const ChatScreen = ({ socket }: IChatScreen) => {
   useEffect(() => {
     if (isError) {
       dispatch(removeUser());
-      history.push("/login");
+      history.push("/");
     }
   }, [isError, dispatch, history]);
 
