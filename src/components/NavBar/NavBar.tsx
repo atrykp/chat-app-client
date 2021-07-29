@@ -8,7 +8,10 @@ const NavBar = () => {
   return (
     <div className="navbar-wrapper">
       <h1>Chat App</h1>
-      <div className="navbar-user-icon" onClick={() => history.push("/")}></div>
+      <div
+        className="navbar-user-icon"
+        onClick={() => history.push(`${userInfo._id ? "/user" : "/"}`)}
+      ></div>
       <div className="navbar-links-wrapper">
         <NavLink className="navbar-link" to="/conversations">
           Chats

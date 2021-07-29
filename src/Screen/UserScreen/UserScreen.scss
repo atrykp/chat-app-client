@@ -1,0 +1,46 @@
+.user-screen-wrapper {
+  display: grid;
+  height: 100vh;
+  width: 100%;
+  justify-items: center;
+  align-items: center;
+  grid-template-rows: 20% 40% 40%;
+}
+.user-screen-header {
+  width: 100%;
+  background-color: #395d75;
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid gray;
+  height: 100%;
+}
+.user-screen-header p {
+  color: whitesmoke;
+  font-size: 2.5rem;
+  text-align: center;
+  font-weight: lighter;
+}
+.user-screen-data {
+  height: 100%;
+  padding: 0 5%;
+  font-size: 1.3rem;
+  border-bottom: 1px solid gray;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.user-screen-data span {
+  color: #395d75;
+  font-weight: bold;
+}
+.user-screen-buttons {
+  width: 100%;
+  text-align: center;
+}
+.user-screen-remove {
+  background-color: transparent;
+  text-decoration: underline;
+}

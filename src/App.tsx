@@ -15,6 +15,7 @@ import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
 import { useAppSelector } from "./hooks/redux-hooks";
 import StartScreen from "./Screen/StartScreen/StartScreen";
+import UserScreen from "./Screen/UserScreen/UserScreen";
 
 function App() {
   const userInfo = useAppSelector((state) => state.user);
@@ -41,6 +42,9 @@ function App() {
       <Switch>
         <Route path="/" exact>
           <StartScreen />
+        </Route>
+        <Route path="/user" exact>
+          <UserScreen />
         </Route>
         <Route path="/login" exact>
           <LoginScreen />
