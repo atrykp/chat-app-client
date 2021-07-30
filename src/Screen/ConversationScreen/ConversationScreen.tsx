@@ -6,7 +6,7 @@ import { useCallback, useEffect } from "react";
 import { IListElement } from "../../components/ListElement/ListElement";
 import { useAxios } from "../../hooks/useAxios";
 import { useHistory } from "react-router";
-import { removeUser } from "../../store/slices/userSlice";
+import { useLogout } from "../../hooks/useLogout";
 
 const ConversationScreen = () => {
   const dispatch = useAppDispatch();
@@ -16,6 +16,7 @@ const ConversationScreen = () => {
     getConversations()
   );
   const { authAxiosGet } = useAxios(userInfo.token);
+  const logout = useLogout();
 
   const getConversations = useCallback(async () => {
     const { data } = await authAxiosGet("http://localhost:5000/conversations");
@@ -34,7 +35,6 @@ const ConversationScreen = () => {
           username: data.user.username,
           text: data.user.description,
           img: data.user.profilePicture,
-          key: data.user.username,
           _id: data.user._id,
           conversationId: element._id,
         };
@@ -48,10 +48,9 @@ const ConversationScreen = () => {
 
   useEffect(() => {
     if (isError) {
-      dispatch(removeUser());
-      history.push("/");
+      logout();
     }
-  }, [isError, dispatch, history]);
+  }, [isError, logout]);
 
   return (
     <div>

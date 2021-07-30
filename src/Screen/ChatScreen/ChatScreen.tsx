@@ -9,6 +9,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useAxios } from "../../hooks/useAxios";
 import { Socket } from "dgram";
 import { removeUser } from "../../store/slices/userSlice";
+import { useLogout } from "../../hooks/useLogout";
 
 type Inputs = {
   textInput: string;
@@ -36,6 +37,7 @@ const ChatScreen = ({ socket }: IChatScreen) => {
   );
   const { authAxiosGet, authAxiosPost } = useAxios(userInfo.token);
   const history = useHistory();
+  const logout = useLogout();
 
   const getChat = async (token: string, id: string) => {
     const { data } = await authAxiosGet(`http://localhost:5000/message/${id}`);
@@ -117,8 +119,7 @@ const ChatScreen = ({ socket }: IChatScreen) => {
 
   useEffect(() => {
     if (isError) {
-      dispatch(removeUser());
-      history.push("/");
+      logout();
     }
   }, [isError, dispatch, history]);
 

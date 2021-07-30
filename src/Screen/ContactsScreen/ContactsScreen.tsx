@@ -2,10 +2,10 @@ import { FormEvent, useRef, useState } from "react";
 import { useHistory } from "react-router";
 import ListElement from "../../components/ListElement/ListElement";
 import NavBar from "../../components/NavBar/NavBar";
-import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
+import { useAppSelector } from "../../hooks/redux-hooks";
 import { useAxios } from "../../hooks/useAxios";
+import { useLogout } from "../../hooks/useLogout";
 import profile from "../../images/profile.jpg";
-import { removeUser } from "../../store/slices/userSlice";
 import ListTemplate from "../../Template/ListTemplate/ListTemplate";
 
 import "./ContactsScreen.scss";
@@ -23,7 +23,7 @@ const ContactsScreen = () => {
   const { authAxiosGet, authAxiosPost } = useAxios(userInfo.token);
   const [usersList, setUsersList] = useState<IUserElement[]>([]);
   const history = useHistory();
-  const dispatch = useAppDispatch();
+  const logout = useLogout();
 
   const handleSearch = async (e: FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -56,8 +56,7 @@ const ContactsScreen = () => {
         setUsersList([]);
       }
     } catch (error) {
-      dispatch(removeUser());
-      history.push("/");
+      logout();
     }
   };
   const closeSearch = () => {
