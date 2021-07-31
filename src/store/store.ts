@@ -5,14 +5,17 @@ import { combineReducers } from "redux";
 import { persistReducer } from "redux-persist";
 
 import userReducer from "../store/slices/userSlice";
+import appStateReducer from "../store/slices/appStateSlice";
 
 const reducers = combineReducers({
   user: userReducer,
+  appState: appStateReducer,
 });
 
 const persistConfig = {
   key: "root",
   storage,
+  blacklist: ["appState"],
 };
 const persistedReducer = persistReducer(persistConfig, reducers);
 
@@ -20,9 +23,7 @@ export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: ["persist/PERSIST"],
-      },
+      serializableCheck: false,
     }).concat(logger),
 });
 

@@ -10,8 +10,6 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import { useLogout } from "../../hooks/useLogout";
 import { useAxios } from "../../hooks/useAxios";
 
-import { Socket } from "dgram";
-
 import { removeUser } from "../../store/slices/userSlice";
 
 import "./ChatScreen.scss";
@@ -19,10 +17,6 @@ import "./ChatScreen.scss";
 type Inputs = {
   textInput: string;
 };
-
-interface IChatScreen {
-  socket: Socket;
-}
 
 interface newMessage {
   _id: string;
@@ -34,7 +28,7 @@ interface IParams {
   receiverName: string;
 }
 
-const ChatScreen = ({ socket }: IChatScreen) => {
+const ChatScreen = () => {
   const [messagesList, setMessagesList] = useState<any[]>([]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -42,6 +36,7 @@ const ChatScreen = ({ socket }: IChatScreen) => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const userInfo = useAppSelector((state) => state.user);
+  const socket = useAppSelector((state) => state.appState.socket);
   const { authAxiosGet, authAxiosPost } = useAxios(userInfo.token);
   const logout = useLogout();
 
@@ -128,16 +123,19 @@ const ChatScreen = ({ socket }: IChatScreen) => {
 
   useEffect(() => {
     if (!socket) return;
-    socket.on("getMessage", (message) => {
-      addNewMessage({ textInput: message.message, _id: message.senderId });
-    });
+    socket.on(
+      "getMessage",
+      (message: { message: string; senderId: string }) => {
+        addNewMessage({ textInput: message.message, _id: message.senderId });
+      }
+    );
     return () => {
       socket.removeAllListeners("getMessage");
     };
   }, [socket, addNewMessage]);
 
   useEffect(() => {
-    showMessages(data);
+    if (data?.length) showMessages(data);
   }, [data, showMessages]);
 
   useEffect(() => {
