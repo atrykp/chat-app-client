@@ -1,15 +1,20 @@
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { useForm, SubmitHandler } from "react-hook-form";
+
 import Button from "../../components/Button";
 import Message from "../../components/Message/Message";
-import "./ChatScreen.scss";
+
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useAxios } from "../../hooks/useAxios";
-import { Socket } from "dgram";
-import { removeUser } from "../../store/slices/userSlice";
 import { useLogout } from "../../hooks/useLogout";
+import { useAxios } from "../../hooks/useAxios";
+
+import { Socket } from "dgram";
+
+import { removeUser } from "../../store/slices/userSlice";
+
+import "./ChatScreen.scss";
 
 type Inputs = {
   textInput: string;
@@ -24,41 +29,53 @@ interface newMessage {
   textInput: string;
 }
 
+interface IParams {
+  id: string;
+  receiverName: string;
+}
+
 const ChatScreen = ({ socket }: IChatScreen) => {
-  const dispatch = useAppDispatch();
-  const { register, handleSubmit, reset } = useForm<Inputs>();
-  const userInfo = useAppSelector((state) => state.user);
   const [messagesList, setMessagesList] = useState<any[]>([]);
-  const { id: conversationId } = useParams<{ id: string }>();
-  const { receiverName } = useParams<{ receiverName: string }>();
+
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { isLoading, isError, data } = useQuery("getChat", () =>
-    getChat(userInfo.token, conversationId)
-  );
-  const { authAxiosGet, authAxiosPost } = useAxios(userInfo.token);
+
   const history = useHistory();
+  const dispatch = useAppDispatch();
+  const userInfo = useAppSelector((state) => state.user);
+  const { authAxiosGet, authAxiosPost } = useAxios(userInfo.token);
   const logout = useLogout();
+
+  const { register, handleSubmit, reset } = useForm<Inputs>();
+  const { id: conversationId, receiverName } = useParams<IParams>();
+
+  const { isLoading, isError, data } = useQuery(
+    ["getChat", userInfo.token, conversationId],
+    () => getChat(userInfo.token, conversationId)
+  );
 
   const getChat = async (token: string, id: string) => {
     const { data } = await authAxiosGet(`http://localhost:5000/message/${id}`);
-    showMessages(data);
+
     return data;
   };
 
-  const showMessages = (messages: any) => {
-    const messagesList = messages.map((el: any) => {
-      return (
-        <div ref={scrollRef} key={`div${el._id}`}>
-          <Message
-            key={el._id}
-            message={{ text: el.text, sender: el.sender, date: el.createdAt }}
-            main={el.sender === userInfo._id}
-          />
-        </div>
-      );
-    });
-    setMessagesList(messagesList);
-  };
+  const showMessages = useCallback(
+    (messages: any) => {
+      const messagesList = messages.map((el: any) => {
+        return (
+          <div ref={scrollRef} key={`div${el._id}`}>
+            <Message
+              key={el._id}
+              message={{ text: el.text, sender: el.sender, date: el.createdAt }}
+              main={el.sender === userInfo._id}
+            />
+          </div>
+        );
+      });
+      setMessagesList(messagesList);
+    },
+    [userInfo._id]
+  );
 
   const createMessage = useCallback(
     (message: any) => {
@@ -76,12 +93,14 @@ const ChatScreen = ({ socket }: IChatScreen) => {
     },
     [userInfo._id]
   );
+
   const addNewMessage = useCallback(
     (message: newMessage) => {
       setMessagesList([...messagesList, createMessage(message)]);
     },
     [createMessage, messagesList]
   );
+
   const sendMessage: SubmitHandler<Inputs> = async (data) => {
     addNewMessage({ textInput: data.textInput, _id: userInfo._id });
     try {
@@ -118,10 +137,14 @@ const ChatScreen = ({ socket }: IChatScreen) => {
   }, [socket, addNewMessage]);
 
   useEffect(() => {
+    showMessages(data);
+  }, [data, showMessages]);
+
+  useEffect(() => {
     if (isError) {
       logout();
     }
-  }, [isError, dispatch, history]);
+  }, [isError, logout]);
 
   useEffect(() => {
     scrollRef?.current?.scrollIntoView({ behavior: "smooth" });

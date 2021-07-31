@@ -1,4 +1,3 @@
-import React from "react";
 import "./Message.scss";
 
 export interface IMessage {

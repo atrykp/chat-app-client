@@ -9,6 +9,7 @@ export interface IListElement {
   conversationId?: string;
   path?: string;
   callback?(): void;
+  _id?: string;
 }
 
 const ListElement = ({

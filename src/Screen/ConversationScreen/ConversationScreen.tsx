@@ -1,19 +1,21 @@
+import { useCallback, useEffect } from "react";
+import { useQuery } from "react-query";
+import { useAppSelector } from "../../hooks/redux-hooks";
+
 import NavBar from "../../components/NavBar/NavBar";
 import ListTemplate from "../../Template/ListTemplate/ListTemplate";
-import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
-import { useQuery } from "react-query";
-import { useCallback, useEffect } from "react";
-import { IListElement } from "../../components/ListElement/ListElement";
+
 import { useAxios } from "../../hooks/useAxios";
-import { useHistory } from "react-router";
 import { useLogout } from "../../hooks/useLogout";
 
+import { IListElement } from "../../components/ListElement/ListElement";
+
 const ConversationScreen = () => {
-  const dispatch = useAppDispatch();
-  const history = useHistory();
   const userInfo = useAppSelector((state) => state.user);
-  const { isLoading, isError, data } = useQuery("getConversations", () =>
-    getConversations()
+  const { isLoading, isError, data } = useQuery(
+    "getConversations",
+    () => getConversations(),
+    { retry: 2, staleTime: 1000 }
   );
   const { authAxiosGet } = useAxios(userInfo.token);
   const logout = useLogout();
@@ -31,7 +33,7 @@ const ConversationScreen = () => {
           `http://localhost:5000/user/${user}`
         );
 
-        const userObj = {
+        const userObj: IListElement = {
           username: data.user.username,
           text: data.user.description,
           img: data.user.profilePicture,
@@ -57,7 +59,6 @@ const ConversationScreen = () => {
       <NavBar />
       {isLoading && <h1 style={{ position: "absolute" }}>loading</h1>}
       {isError && <h1 style={{ position: "absolute" }}>error</h1>}
-
       <ListTemplate listElements={data!} path="chat" />
     </div>
   );
