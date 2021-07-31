@@ -22,8 +22,6 @@ import { createSocket } from "./store/slices/appStateSlice";
 
 function App() {
   const userInfo = useAppSelector((state) => state.user);
-  const socket = useAppSelector((state) => state.appState.socket);
-
   const dispatch = useAppDispatch();
 
   useEffect(() => {

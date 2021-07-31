@@ -1,12 +1,15 @@
 import { FormEvent, useRef, useState } from "react";
 import { useHistory } from "react-router";
+
 import ListElement from "../../components/ListElement/ListElement";
+import ListTemplate from "../../Template/ListTemplate/ListTemplate";
 import NavBar from "../../components/NavBar/NavBar";
+
 import { useAppSelector } from "../../hooks/redux-hooks";
 import { useAxios } from "../../hooks/useAxios";
 import { useLogout } from "../../hooks/useLogout";
+
 import profile from "../../images/profile.jpg";
-import ListTemplate from "../../Template/ListTemplate/ListTemplate";
 
 import "./ContactsScreen.scss";
 
@@ -18,10 +21,13 @@ interface IUserElement {
 }
 const ContactsScreen = () => {
   const [isSearchActive, setIsSearchActive] = useState(true);
+  const [usersList, setUsersList] = useState<IUserElement[]>([]);
+
   const searchRef = useRef<HTMLInputElement>(null);
+
   const userInfo = useAppSelector((state) => state.user);
   const { authAxiosGet, authAxiosPost } = useAxios(userInfo.token);
-  const [usersList, setUsersList] = useState<IUserElement[]>([]);
+
   const history = useHistory();
   const logout = useLogout();
 
@@ -31,14 +37,14 @@ const ContactsScreen = () => {
       const { data } = await authAxiosGet(
         `http://localhost:5000/user/username/${searchRef.current?.value}`
       );
-      if (!!data.length) {
+      if (data.length) {
         const users = data.map((element: IUserElement) => {
           const createConversation = async () => {
             const conversation = await authAxiosPost(
               "http://localhost:5000/conversations",
               { member: _id }
             );
-            history.push(`chat/${conversation.data._id}`);
+            history.push(`chat/${conversation.data._id}/${userName}`);
           };
           const { userName, _id, profilePicture } = element;
           return (

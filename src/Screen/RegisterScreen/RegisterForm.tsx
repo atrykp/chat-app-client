@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useHistory } from "react-router";
 
 import Button from "../../components/Button";
+
 import { useAppDispatch } from "../../hooks/redux-hooks";
 import { registerUser } from "../../thunk-actions/user-thunk-actions";
 
@@ -23,20 +24,20 @@ const RegisterForm = ({ setCurrentError }: IRegisterForm) => {
   } = useForm();
 
   useEffect(() => {
-    if (errors.password && errors.email && errors.name) {
+    if (errors.password && errors.email && errors.username) {
       setCurrentError("incorrect data");
-    } else if (errors.name) {
-      setCurrentError("incorrect name (minLength: 3) ");
+    } else if (errors.username) {
+      setCurrentError("incorrect username (minLength: 3) ");
+    } else if (errors.email) {
+      setCurrentError("incorrect email");
     } else if (errors.password) {
       setCurrentError(
         "incorrect password (minLength: 5, one letter, one number)"
       );
-    } else if (errors.email) {
-      setCurrentError("incorrect email");
     } else {
       setCurrentError("");
     }
-  }, [errors.email, errors.password, errors.name, setCurrentError]);
+  }, [errors.email, errors.password, errors.username, setCurrentError]);
   const onSubmit = (data: any) => {
     const photo = photoRef.current?.files ? photoRef.current.files[0] : null;
     dispatch(registerUser(data, photo));
