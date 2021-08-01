@@ -20,7 +20,7 @@ interface IUserElement {
   _id: string;
 }
 const ContactsScreen = () => {
-  const [isSearchActive, setIsSearchActive] = useState(true);
+  const [isSearchActive, setIsSearchActive] = useState(false);
   const [usersList, setUsersList] = useState<IUserElement[]>([]);
 
   const searchRef = useRef<HTMLInputElement>(null);

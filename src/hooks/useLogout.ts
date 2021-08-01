@@ -10,7 +10,7 @@ export const useLogout = () => {
 
   const logout = () => {
     dispatch(removeUser());
-    socket.disconnect();
+    socket?.disconnect();
     dispatch(removeSocket());
     history.push("/");
   };
