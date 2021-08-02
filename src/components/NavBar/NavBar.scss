@@ -42,3 +42,10 @@
 .navbar-user-icon:active {
   filter: brightness(0.7);
 }
+.search-users {
+  background-image: url("../../images/loupe.svg");
+  background-position: center;
+  background-size: contain;
+  width: 30px;
+  height: 30px;
+}

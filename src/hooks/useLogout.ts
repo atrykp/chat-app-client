@@ -11,7 +11,6 @@ export const useLogout = () => {
   const logout = () => {
     dispatch(removeUser());
     socket?.disconnect();
-    dispatch(removeSocket());
     history.push("/");
   };
   return logout;

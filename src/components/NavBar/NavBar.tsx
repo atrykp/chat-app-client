@@ -1,10 +1,16 @@
 import "./NavBar.scss";
-import { NavLink, useHistory } from "react-router-dom";
+import { NavLink, useHistory, useLocation } from "react-router-dom";
 import { useAppSelector } from "../../hooks/redux-hooks";
 
-const NavBar = () => {
+interface INavBar {
+  callback?(): void;
+}
+
+const NavBar = ({ callback }: INavBar) => {
   const userInfo = useAppSelector((state) => state.user);
   const history = useHistory();
+  const location = useLocation();
+
   return (
     <div className="navbar-wrapper">
       <h1>Chat App</h1>
@@ -19,6 +25,9 @@ const NavBar = () => {
         <NavLink className="navbar-link" to="contacts">
           contacts
         </NavLink>
+        {location.pathname.includes("contacts") && (
+          <div className="search-users" onClick={() => callback?.()}></div>
+        )}
       </div>
     </div>
   );

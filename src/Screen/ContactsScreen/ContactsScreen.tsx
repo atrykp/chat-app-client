@@ -46,6 +46,10 @@ const ContactsScreen = ({ onlineArr }: IUserOnline) => {
     { retry: 2, staleTime: 1000 }
   );
 
+  const showSearchWindow = () => {
+    setIsSearchActive((prevValue) => !prevValue);
+  };
+
   const handleSearch = async (e: FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
@@ -102,7 +106,7 @@ const ContactsScreen = ({ onlineArr }: IUserOnline) => {
 
   return (
     <>
-      <NavBar />
+      <NavBar callback={showSearchWindow} />
       {isSearchActive && (
         <div className="search-background">
           <div className="search-wrapper">
