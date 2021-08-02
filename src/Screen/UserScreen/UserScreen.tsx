@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useHistory } from "react-router";
 
 import Button from "../../components/Button";
@@ -11,7 +12,13 @@ import { useLogout } from "../../hooks/useLogout";
 import "./UserScreen.scss";
 
 const UserScreen = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const [isConfirm, setIsConfirm] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const userInfo = useAppSelector((state) => state.user);
   const history = useHistory();
   const logout = useLogout();
@@ -21,6 +28,13 @@ const UserScreen = () => {
     await authAxiosDelete("http://localhost:5000/user");
     logout();
   };
+  const closeEditModal = () => {
+    setIsEdit(false);
+  };
+  const onSubmit = (data: any) => {
+    console.log(data);
+  };
+
   return (
     <div className="user-screen-wrapper">
       {isConfirm && (
@@ -29,6 +43,41 @@ const UserScreen = () => {
           confirmCallback={removeAccount}
           closeCallback={() => setIsConfirm(false)}
         />
+      )}
+      {isEdit && (
+        <div className="user-screen-edit-wrapper">
+          <div className="user-screen-edit">
+            <form
+              action=""
+              className="register-screen-form"
+              onSubmit={handleSubmit(onSubmit)}
+            >
+              <input
+                {...register("email", {
+                  pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                })}
+                type="text"
+                placeholder="Email"
+              />
+              <input
+                {...register("description", {})}
+                type="text"
+                placeholder="Description"
+              />
+              <input
+                {...register("password", {
+                  pattern: /^(?=.*\d)(?=.*[a-z])(?=.*[a-zA-Z]).{5,}$/gm,
+                })}
+                type="password"
+                placeholder="Password"
+              />
+              <Button callback={() => handleSubmit(onSubmit)}>save</Button>
+            </form>
+            <Button secondary callback={() => closeEditModal()}>
+              close
+            </Button>
+          </div>
+        </div>
       )}
 
       <div className="user-screen-header">
@@ -51,6 +100,7 @@ const UserScreen = () => {
         <p>
           password: <span>****</span>
         </p>
+        <p onClick={() => setIsEdit(true)}>edit data</p>
       </div>
       <div className="user-screen-buttons">
         <Button callback={() => logout()}>Logout</Button>
