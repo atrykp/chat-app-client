@@ -1,7 +1,9 @@
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router";
 
-import ListElement from "../../components/ListElement/ListElement";
+import ListElement, {
+  IListElement,
+} from "../../components/ListElement/ListElement";
 import ListTemplate from "../../Template/ListTemplate/ListTemplate";
 import NavBar from "../../components/NavBar/NavBar";
 
@@ -9,27 +11,40 @@ import { useAppSelector } from "../../hooks/redux-hooks";
 import { useAxios } from "../../hooks/useAxios";
 import { useLogout } from "../../hooks/useLogout";
 
-import profile from "../../images/profile.jpg";
-
 import "./ContactsScreen.scss";
+import { useGetConversations } from "../../hooks/useGetConversations";
+import { useQuery } from "react-query";
 
-const contacts = [{ username: "John", text: "hello im new", img: profile }];
 interface IUserElement {
   userName: string;
   profilePicture: string;
   _id: string;
 }
-const ContactsScreen = () => {
+export interface IUserOnline {
+  onlineArr: { userId: string; socketId: string }[];
+}
+const ContactsScreen = ({ onlineArr }: IUserOnline) => {
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [usersList, setUsersList] = useState<IUserElement[]>([]);
+  const [onlineUsers, setOnlineUsers] = useState<IListElement[]>();
 
   const searchRef = useRef<HTMLInputElement>(null);
 
   const userInfo = useAppSelector((state) => state.user);
   const { authAxiosGet, authAxiosPost } = useAxios(userInfo.token);
+  const { getConversations } = useGetConversations(
+    userInfo.token,
+    userInfo._id
+  );
 
   const history = useHistory();
   const logout = useLogout();
+
+  const { isLoading, isError, data } = useQuery(
+    "getConversationsList",
+    () => getConversations(),
+    { retry: 2, staleTime: 1000 }
+  );
 
   const handleSearch = async (e: FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -68,6 +83,23 @@ const ContactsScreen = () => {
   const closeSearch = () => {
     setIsSearchActive(false);
   };
+
+  useEffect(() => {
+    if (data && onlineArr) {
+      const newArr = data?.filter((element) => {
+        let isOnline = false;
+        for (let user of onlineArr) {
+          if (element._id === user.userId) {
+            isOnline = true;
+            break;
+          }
+        }
+        return isOnline;
+      });
+      setOnlineUsers(newArr);
+    }
+  }, [data, onlineArr]);
+
   return (
     <>
       <NavBar />
@@ -91,7 +123,13 @@ const ContactsScreen = () => {
         </div>
       )}
 
-      <ListTemplate listElements={contacts}></ListTemplate>
+      <ListTemplate
+        listElements={onlineUsers!}
+        path="chat"
+        padding
+        headerText="online"
+      />
+      <ListTemplate listElements={data!} path="chat" headerText="all" />
     </>
   );
 };

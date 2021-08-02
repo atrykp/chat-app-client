@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import {
   BrowserRouter as Router,
@@ -9,7 +9,9 @@ import {
 
 import LoginScreen from "./Screen/Login/LoginScreen";
 import RegisterScreen from "./Screen/RegisterScreen/RegisterScreen";
-import ContactsScreen from "./Screen/ContactsScreen/ContactsScreen";
+import ContactsScreen, {
+  IUserOnline,
+} from "./Screen/ContactsScreen/ContactsScreen";
 import ConversationScreen from "./Screen/ConversationScreen/ConversationScreen";
 import ChatScreen from "./Screen/ChatScreen/ChatScreen";
 import StartScreen from "./Screen/StartScreen/StartScreen";
@@ -21,6 +23,7 @@ import "./App.scss";
 import { createSocket } from "./store/slices/appStateSlice";
 
 function App() {
+  const [onlineList, setOnlineList] = useState<any[]>([]);
   const userInfo = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
 
@@ -35,12 +38,11 @@ function App() {
     socket.on("hello", (message: string) => {
       console.log(message);
     });
+    socket?.on("usersOnline", (users: IUserOnline[]) => {
+      setOnlineList(users);
+    });
 
     socket.emit("userId", userInfo._id);
-
-    socket.on("usersOnline", (users: { userId: string; socketId: string }[]) =>
-      console.log(users)
-    );
     dispatch(createSocket(socket));
   }, [userInfo._id, dispatch]);
 
@@ -60,7 +62,7 @@ function App() {
           <RegisterScreen />
         </Route>
         <Route path="/contacts" exact>
-          <ContactsScreen />
+          <ContactsScreen onlineArr={onlineList} />
         </Route>
         <Route path="/conversations" exact>
           <ConversationScreen />

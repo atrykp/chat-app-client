@@ -33,7 +33,7 @@ const ConversationScreen = () => {
       <NavBar />
       {isLoading && <h1 style={{ position: "absolute" }}>loading</h1>}
       {isError && <h1 style={{ position: "absolute" }}>error</h1>}
-      <ListTemplate listElements={data!} path="chat" />
+      <ListTemplate listElements={data!} path="chat" padding />
     </div>
   );
 };

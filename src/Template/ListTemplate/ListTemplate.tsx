@@ -7,9 +7,16 @@ import "./ListTemplate.scss";
 export interface IListTemplate {
   listElements: IListElement[];
   path?: string;
+  padding?: boolean;
+  headerText?: string;
 }
 
-const ListTemplate = ({ listElements, path }: IListTemplate) => {
+const ListTemplate = ({
+  listElements,
+  path,
+  padding,
+  headerText,
+}: IListTemplate) => {
   const list = listElements?.map((elem) => (
     <ListElement
       text={elem.text}
@@ -21,7 +28,10 @@ const ListTemplate = ({ listElements, path }: IListTemplate) => {
     />
   ));
   return (
-    <div className="list-template-wrapper">
+    <div
+      className={padding ? "list-template-wrapper-p" : "list-template-wrapper"}
+    >
+      {headerText && <p className="list-template-header">{headerText}</p>}
       <ul>{list}</ul>
     </div>
   );
