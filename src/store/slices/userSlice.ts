@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { INewData } from "../../Screen/UserScreen/UserScreen";
 
 export interface IUser {
   _id: string;
@@ -30,6 +31,9 @@ export const userSlice = createSlice({
       state.description = action.payload.description;
       state.token = action.payload.token;
     },
+    updateUser: (state, action: PayloadAction<INewData>) => {
+      return { ...state, ...action.payload };
+    },
     removeUser: (state) => {
       state._id = initialState._id;
       state.username = initialState.username;
@@ -41,6 +45,6 @@ export const userSlice = createSlice({
   },
 });
 
-export const { addUser, removeUser } = userSlice.actions;
+export const { addUser, removeUser, updateUser } = userSlice.actions;
 
 export default userSlice.reducer;

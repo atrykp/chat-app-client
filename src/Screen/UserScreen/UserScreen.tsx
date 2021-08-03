@@ -6,13 +6,14 @@ import Button from "../../components/Button";
 import ConfirmModal from "../../components/ConfirmModal/ConfirmModal";
 import InfoBar from "../../components/InfoBar";
 
-import { useAppSelector } from "../../hooks/redux-hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import { useAxios } from "../../hooks/useAxios";
 import { useLogout } from "../../hooks/useLogout";
+import { updateUser } from "../../store/slices/userSlice";
 
 import "./UserScreen.scss";
 
-interface INewData {
+export interface INewData {
   [key: string]: string;
 }
 
@@ -27,7 +28,8 @@ const UserScreen = () => {
   const userInfo = useAppSelector((state) => state.user);
   const history = useHistory();
   const logout = useLogout();
-  const { authAxiosDelete } = useAxios(userInfo.token);
+  const dispatch = useAppDispatch();
+  const { authAxiosDelete, authAxiosPut } = useAxios(userInfo.token);
 
   const removeAccount = async () => {
     await authAxiosDelete("http://localhost:5000/user");
@@ -36,7 +38,7 @@ const UserScreen = () => {
   const closeEditModal = () => {
     setIsEdit(false);
   };
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     console.log(data);
 
     const newData: INewData = {};
@@ -45,7 +47,14 @@ const UserScreen = () => {
         newData[key] = data[key];
       }
     }
-    console.log(newData);
+    const { data: updatedUser } = await authAxiosPut(
+      "http://localhost:5000/user",
+      newData
+    );
+
+    await dispatch(updateUser(updatedUser));
+
+    setIsEdit(false);
   };
 
   return (
