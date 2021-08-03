@@ -4,12 +4,17 @@ import { useHistory } from "react-router";
 
 import Button from "../../components/Button";
 import ConfirmModal from "../../components/ConfirmModal/ConfirmModal";
+import InfoBar from "../../components/InfoBar";
 
 import { useAppSelector } from "../../hooks/redux-hooks";
 import { useAxios } from "../../hooks/useAxios";
 import { useLogout } from "../../hooks/useLogout";
 
 import "./UserScreen.scss";
+
+interface INewData {
+  [key: string]: string;
+}
 
 const UserScreen = () => {
   const {
@@ -33,6 +38,14 @@ const UserScreen = () => {
   };
   const onSubmit = (data: any) => {
     console.log(data);
+
+    const newData: INewData = {};
+    for (let key in data) {
+      if (data[key]) {
+        newData[key] = data[key];
+      }
+    }
+    console.log(newData);
   };
 
   return (
@@ -44,6 +57,11 @@ const UserScreen = () => {
           closeCallback={() => setIsConfirm(false)}
         />
       )}
+      <InfoBar
+        text="incorrect data"
+        warning
+        isOpen={!!Object.keys(errors).length && isEdit}
+      />
       {isEdit && (
         <div className="user-screen-edit-wrapper">
           <div className="user-screen-edit">
@@ -58,18 +76,20 @@ const UserScreen = () => {
                 })}
                 type="text"
                 placeholder="Email"
+                defaultValue={userInfo.email}
               />
               <input
-                {...register("description", {})}
+                {...register("description", { minLength: 1, required: true })}
                 type="text"
                 placeholder="Description"
+                defaultValue={userInfo.description}
               />
               <input
                 {...register("password", {
                   pattern: /^(?=.*\d)(?=.*[a-z])(?=.*[a-zA-Z]).{5,}$/gm,
                 })}
                 type="password"
-                placeholder="Password"
+                placeholder="New Password"
               />
               <Button callback={() => handleSubmit(onSubmit)}>save</Button>
             </form>
