@@ -5,6 +5,7 @@ export interface IMessage {
     text: string;
     date: string;
     sender: string;
+    isRead: boolean;
   };
   main?: boolean;
 }

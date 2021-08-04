@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import Button from "../../components/Button";
-import Message from "../../components/Message/Message";
+import Message, { IMessage } from "../../components/Message/Message";
 
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import { useLogout } from "../../hooks/useLogout";
@@ -37,7 +37,9 @@ const ChatScreen = () => {
   const dispatch = useAppDispatch();
   const userInfo = useAppSelector((state) => state.user);
   const socket = useAppSelector((state) => state.appState.socket);
-  const { authAxiosGet, authAxiosPost } = useAxios(userInfo.token);
+  const { authAxiosGet, authAxiosPost, authAxiosPut } = useAxios(
+    userInfo.token
+  );
   const logout = useLogout();
 
   const { register, handleSubmit, reset } = useForm<Inputs>();
@@ -45,23 +47,45 @@ const ChatScreen = () => {
 
   const { isLoading, isError, data } = useQuery(
     ["getChat", userInfo.token, conversationId],
-    () => getChat(userInfo.token, conversationId)
+    () => getChat(conversationId)
   );
 
-  const getChat = async (token: string, id: string) => {
+  const getChat = async (id: string) => {
     const { data } = await authAxiosGet(`http://localhost:5000/message/${id}`);
 
     return data;
   };
 
+  const handleUnread = async (messages: any) => {
+    const readList = messages.filter(
+      (element: any) => element.isRead || element.sender === userInfo._id
+    );
+
+    const unreadList = messages.filter(
+      (element: any) => !element.isRead && element.sender !== userInfo._id
+    );
+    if (!unreadList.length) return readList;
+    const { data } = await authAxiosPut(
+      "http://localhost:5000/message",
+      unreadList
+    );
+    return [...readList, ...data];
+  };
+
   const showMessages = useCallback(
-    (messages: any) => {
-      const messagesList = messages.map((el: any) => {
+    async (messages: any) => {
+      const updatedMessages: any = await handleUnread(messages);
+      const messagesList = updatedMessages.map((el: any) => {
         return (
           <div ref={scrollRef} key={`div${el._id}`}>
             <Message
               key={el._id}
-              message={{ text: el.text, sender: el.sender, date: el.createdAt }}
+              message={{
+                text: el.text,
+                sender: el.sender,
+                date: el.createdAt,
+                isRead: el.isRead,
+              }}
               main={el.sender === userInfo._id}
             />
           </div>
@@ -81,6 +105,7 @@ const ChatScreen = () => {
             text: message.textInput,
             sender: message._id,
             date: new Date().toLocaleDateString(),
+            isRead: message.isRead,
           }}
           main={message._id === userInfo._id}
         />
