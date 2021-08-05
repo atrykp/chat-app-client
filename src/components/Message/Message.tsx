@@ -15,7 +15,16 @@ const Message = ({ message, main }: IMessage) => {
     <div className={main ? "message-wrapper-main" : "message-wrapper"}>
       <div className={main ? "message-main" : "message"}>
         <p className="message-text">{message.text}</p>
-        <p className="message-date">{message.date}</p>
+        <div className="message-info-wrapper">
+          <p className="message-date">{message.date}</p>
+          {main && (
+            <div
+              className={
+                message.isRead ? "message-status-read" : "message-status-unread"
+              }
+            ></div>
+          )}
+        </div>
       </div>
     </div>
   );

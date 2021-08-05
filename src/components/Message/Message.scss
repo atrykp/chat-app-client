@@ -26,3 +26,26 @@
 .message-date {
   justify-self: flex-end;
 }
+.message-status-unread {
+  width: 20px;
+  height: 20px;
+  background-image: url("../../images/envelope.svg");
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-left: 5px;
+}
+
+.message-status-read {
+  width: 20px;
+  height: 20px;
+  background-image: url("../../images/mail.svg");
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-left: 5px;
+}
+.message-info-wrapper {
+  display: flex;
+  align-items: center;
+}

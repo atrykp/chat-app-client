@@ -13,6 +13,7 @@ import { useAxios } from "../../hooks/useAxios";
 import { removeUser } from "../../store/slices/userSlice";
 
 import "./ChatScreen.scss";
+import { convertDate } from "../../utils/convertDate";
 
 type Inputs = {
   textInput: string;
@@ -83,7 +84,7 @@ const ChatScreen = () => {
               message={{
                 text: el.text,
                 sender: el.sender,
-                date: el.createdAt,
+                date: convertDate(el.messageDate),
                 isRead: el.isRead,
               }}
               main={el.sender === userInfo._id}
@@ -104,7 +105,7 @@ const ChatScreen = () => {
           message={{
             text: message.textInput,
             sender: message._id,
-            date: new Date().toLocaleDateString(),
+            date: convertDate(Date.now()),
             isRead: message.isRead,
           }}
           main={message._id === userInfo._id}
