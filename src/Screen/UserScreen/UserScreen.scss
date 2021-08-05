@@ -8,6 +8,7 @@
 }
 .user-screen-header {
   width: 100%;
+  max-width: 800px;
   align-self: flex-start;
   display: flex;
   align-items: center;
@@ -45,11 +46,13 @@
 }
 .user-screen-buttons {
   width: 100%;
+  max-width: 300px;
   text-align: center;
 }
 .user-screen-remove {
   background-color: transparent;
   text-decoration: underline;
+  box-shadow: none;
 }
 
 .user-screen-backBtn {

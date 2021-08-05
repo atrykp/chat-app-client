@@ -17,15 +17,16 @@
 
 .register-screen-form input {
   min-width: 300px;
-  height: 60px;
+  height: 55px;
   max-width: 400px;
   margin: 10px 0;
   border-radius: 15px;
   border: 2px solid white;
   outline: none;
-  font-size: 2rem;
+  font-size: 1.6rem;
   padding: 0 15px;
   color: rgb(42, 42, 42);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 .register-screen-form input:focus {
   border: 2px solid rgb(255, 174, 0);
@@ -39,6 +40,7 @@
 .photo-box-input label {
   color: white;
   font-size: 1rem;
+  cursor: pointer;
 }
 .photo-box-input label input {
   display: none;
