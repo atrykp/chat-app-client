@@ -53,7 +53,6 @@ const ChatScreen = () => {
 
   const getChat = async (id: string) => {
     const { data } = await authAxiosGet(`http://localhost:5000/message/${id}`);
-
     return data;
   };
 
