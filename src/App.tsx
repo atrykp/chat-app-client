@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
 import {
   BrowserRouter as Router,
   Redirect,
@@ -9,42 +7,18 @@ import {
 
 import LoginScreen from "./Screen/Login/LoginScreen";
 import RegisterScreen from "./Screen/RegisterScreen/RegisterScreen";
-import ContactsScreen, {
-  IUserOnline,
-} from "./Screen/ContactsScreen/ContactsScreen";
 import ConversationScreen from "./Screen/ConversationScreen/ConversationScreen";
 import ChatScreen from "./Screen/ChatScreen/ChatScreen";
 import StartScreen from "./Screen/StartScreen/StartScreen";
 import UserScreen from "./Screen/UserScreen/UserScreen";
 
-import { useAppDispatch, useAppSelector } from "./hooks/redux-hooks";
+import { useSocket } from "./hooks/useSocket";
 
 import "./App.scss";
-import { createSocket } from "./store/slices/appStateSlice";
+import ContactsScreen from "./Screen/ContactsScreen/ContactsScreen";
 
 function App() {
-  const [onlineList, setOnlineList] = useState<any[]>([]);
-  const userInfo = useAppSelector((state) => state.user);
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (!userInfo._id) return;
-
-    const socket = io("http://localhost:5000");
-    socket.onAny((event, ...args) => {
-      console.log(event, args);
-    });
-
-    socket.on("hello", (message: string) => {
-      console.log(message);
-    });
-    socket?.on("usersOnline", (users: IUserOnline[]) => {
-      setOnlineList(users);
-    });
-
-    socket.emit("userId", userInfo._id);
-    dispatch(createSocket(socket));
-  }, [userInfo._id, dispatch]);
+  useSocket();
 
   return (
     <Router>
@@ -62,7 +36,7 @@ function App() {
           <RegisterScreen />
         </Route>
         <Route path="/contacts" exact>
-          <ContactsScreen onlineArr={onlineList} />
+          <ContactsScreen />
         </Route>
         <Route path="/conversations" exact>
           <ConversationScreen />

@@ -20,10 +20,8 @@ interface IUserElement {
   profilePicture: string;
   _id: string;
 }
-export interface IUserOnline {
-  onlineArr: { userId: string; socketId: string }[];
-}
-const ContactsScreen = ({ onlineArr }: IUserOnline) => {
+
+const ContactsScreen = () => {
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [usersList, setUsersList] = useState<IUserElement[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<IListElement[]>();
@@ -31,6 +29,7 @@ const ContactsScreen = ({ onlineArr }: IUserOnline) => {
   const searchRef = useRef<HTMLInputElement>(null);
 
   const userInfo = useAppSelector((state) => state.user);
+  const onlineArr = useAppSelector((state) => state.socketSlice.onlineUsers);
   const { authAxiosGet, authAxiosPost } = useAxios(userInfo.token);
   const { getConversations } = useGetConversations(
     userInfo.token,

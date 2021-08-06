@@ -6,10 +6,12 @@ import { persistReducer } from "redux-persist";
 
 import userReducer from "../store/slices/userSlice";
 import appStateReducer from "../store/slices/appStateSlice";
+import socketSlice from "./slices/socketSlice";
 
 const reducers = combineReducers({
   user: userReducer,
   appState: appStateReducer,
+  socketSlice: socketSlice,
 });
 
 const persistConfig = {
