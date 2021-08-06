@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import Button from "../../components/Button";
-import Message, { IMessage } from "../../components/Message/Message";
+import Message from "../../components/Message/Message";
 
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import { useLogout } from "../../hooks/useLogout";
@@ -14,6 +14,7 @@ import { removeUser } from "../../store/slices/userSlice";
 
 import "./ChatScreen.scss";
 import { convertDate } from "../../utils/convertDate";
+import { IOnlineUser } from "../../store/slices/socketSlice";
 
 type Inputs = {
   textInput: string;
@@ -29,7 +30,10 @@ interface IParams {
   receiverName: string;
 }
 
-const ChatScreen = () => {
+interface IChatScreen {
+  appSocket: any;
+}
+const ChatScreen = ({ appSocket }: IChatScreen) => {
   const [messagesList, setMessagesList] = useState<any[]>([]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -37,7 +41,7 @@ const ChatScreen = () => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const userInfo = useAppSelector((state) => state.user);
-  const socket = useAppSelector((state) => state.appState.socket);
+  const onlineUsers = useAppSelector((state) => state.socketSlice);
   const { authAxiosGet, authAxiosPost, authAxiosPut } = useAxios(
     userInfo.token
   );
@@ -121,6 +125,13 @@ const ChatScreen = () => {
     [createMessage, messagesList]
   );
 
+  const getUserSocketId = (userId: string) => {
+    const receiver: IOnlineUser[] = onlineUsers.onlineUsers.filter(
+      (element: IOnlineUser) => element.userId === userId
+    );
+    if (!!receiver.length) return receiver[0].socketId;
+  };
+
   const sendMessage: SubmitHandler<Inputs> = async (data) => {
     addNewMessage({ textInput: data.textInput, _id: userInfo._id });
     try {
@@ -128,9 +139,10 @@ const ChatScreen = () => {
         `http://localhost:5000/user/username/${receiverName}`
       );
 
-      socket.emit("sendMessage", {
+      appSocket.emit("sendMessage", {
         message: data.textInput,
         receiverId: receiverInfo[0]._id,
+        receiverSocketId: getUserSocketId(receiverInfo[0]._id),
         senderId: userInfo._id,
         date: new Date().toLocaleDateString(),
       });
@@ -145,19 +157,6 @@ const ChatScreen = () => {
     }
     reset();
   };
-
-  useEffect(() => {
-    if (!socket) return;
-    socket.on(
-      "getMessage",
-      (message: { message: string; senderId: string }) => {
-        addNewMessage({ textInput: message.message, _id: message.senderId });
-      }
-    );
-    return () => {
-      socket.removeAllListeners("getMessage");
-    };
-  }, [socket, addNewMessage]);
 
   useEffect(() => {
     if (data?.length) showMessages(data);
