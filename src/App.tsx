@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Redirect,
-  Route,
-  Switch,
-} from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 
 import LoginScreen from "./Screen/Login/LoginScreen";
 import RegisterScreen from "./Screen/RegisterScreen/RegisterScreen";
@@ -21,32 +16,30 @@ function App() {
   const appSocket = useSocket();
 
   return (
-    <Router>
-      <Switch>
-        <Route path="/" exact>
-          <StartScreen />
-        </Route>
-        <Route path="/user" exact>
-          <UserScreen />
-        </Route>
-        <Route path="/login" exact>
-          <LoginScreen />
-        </Route>
-        <Route path="/register" exact>
-          <RegisterScreen />
-        </Route>
-        <Route path="/contacts" exact>
-          <ContactsScreen />
-        </Route>
-        <Route path="/conversations" exact>
-          <ConversationScreen />
-        </Route>
-        <Route path="/chat/:id/:receiverName" exact>
-          <ChatScreen appSocket={appSocket} />
-        </Route>
-        <Redirect to="/" />
-      </Switch>
-    </Router>
+    <Switch>
+      <Route path="/" exact>
+        <StartScreen />
+      </Route>
+      <Route path="/user" exact>
+        <UserScreen />
+      </Route>
+      <Route path="/login" exact>
+        <LoginScreen />
+      </Route>
+      <Route path="/register" exact>
+        <RegisterScreen />
+      </Route>
+      <Route path="/contacts" exact>
+        <ContactsScreen />
+      </Route>
+      <Route path="/conversations" exact>
+        <ConversationScreen />
+      </Route>
+      <Route path="/chat/:id/:receiverName" exact>
+        <ChatScreen appSocket={appSocket} />
+      </Route>
+      <Redirect to="/" />
+    </Switch>
   );
 }
 

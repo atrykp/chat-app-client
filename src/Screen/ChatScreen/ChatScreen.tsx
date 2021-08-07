@@ -33,6 +33,7 @@ interface IParams {
 interface IChatScreen {
   appSocket: any;
 }
+
 const ChatScreen = ({ appSocket }: IChatScreen) => {
   const [messagesList, setMessagesList] = useState<any[]>([]);
 
@@ -42,6 +43,7 @@ const ChatScreen = ({ appSocket }: IChatScreen) => {
   const dispatch = useAppDispatch();
   const userInfo = useAppSelector((state) => state.user);
   const onlineUsers = useAppSelector((state) => state.socketSlice);
+
   const { authAxiosGet, authAxiosPost, authAxiosPut } = useAxios(
     userInfo.token
   );

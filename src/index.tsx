@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
@@ -17,7 +18,9 @@ ReactDOM.render(
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
         <PersistGate loading={null} persistor={persistor}>
-          <App />
+          <Router>
+            <App />
+          </Router>
         </PersistGate>
       </QueryClientProvider>
     </Provider>

@@ -6,10 +6,10 @@ export const useLogout = () => {
   const history = useHistory();
   const dispatch = useAppDispatch();
 
-  const logout = () => {
-    dispatch(removeUser());
-
+  const logout = (socket?: any) => {
     history.push("/");
+    dispatch(removeUser());
+    socket?.disconnect();
   };
   return logout;
 };
