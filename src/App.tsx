@@ -13,7 +13,7 @@ import "./App.scss";
 import ContactsScreen from "./Screen/ContactsScreen/ContactsScreen";
 
 function App() {
-  const appSocket = useSocket();
+  const { getSocket } = useSocket();
 
   return (
     <Switch>
@@ -36,7 +36,7 @@ function App() {
         <ConversationScreen />
       </Route>
       <Route path="/chat/:id/:receiverName" exact>
-        <ChatScreen appSocket={appSocket} />
+        <ChatScreen getSocket={getSocket} />
       </Route>
       <Redirect to="/" />
     </Switch>

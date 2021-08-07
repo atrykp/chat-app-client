@@ -45,6 +45,16 @@
   background-repeat: no-repeat;
   margin-left: 5px;
 }
+.message-status-unsent {
+  width: 20px;
+  height: 20px;
+  background-image: url("../../images/reload.svg");
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-left: 5px;
+}
+
 .message-info-wrapper {
   display: flex;
   align-items: center;

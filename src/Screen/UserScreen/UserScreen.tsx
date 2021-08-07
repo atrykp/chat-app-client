@@ -39,8 +39,6 @@ const UserScreen = () => {
     setIsEdit(false);
   };
   const onSubmit = async (data: any) => {
-    console.log(data);
-
     const newData: INewData = {};
     for (let key in data) {
       if (data[key]) {

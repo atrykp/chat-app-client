@@ -1,26 +1,34 @@
 import "./Message.scss";
 
 export interface IMessage {
-  message: {
-    text: string;
-    date: string;
-    sender: string;
-    isRead: boolean;
-  };
+  text: string;
+  conversationId: string;
+  sender: string;
+  messageDate?: string | number;
+  isRead?: boolean;
+  isSent?: boolean;
+  _id?: string;
+}
+export interface IMessageObj {
+  message: IMessage;
   main?: boolean;
 }
 
-const Message = ({ message, main }: IMessage) => {
+const Message = ({ message, main }: IMessageObj) => {
   return (
     <div className={main ? "message-wrapper-main" : "message-wrapper"}>
       <div className={main ? "message-main" : "message"}>
         <p className="message-text">{message.text}</p>
         <div className="message-info-wrapper">
-          <p className="message-date">{message.date}</p>
+          <p className="message-date">{message.messageDate}</p>
           {main && (
             <div
               className={
-                message.isRead ? "message-status-read" : "message-status-unread"
+                message.isSent
+                  ? message.isRead
+                    ? "message-status-read"
+                    : "message-status-unread"
+                  : "message-status-unsent"
               }
             ></div>
           )}

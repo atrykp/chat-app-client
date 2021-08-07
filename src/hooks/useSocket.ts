@@ -2,22 +2,21 @@ import { useAppDispatch, useAppSelector } from "./redux-hooks";
 import { io } from "socket.io-client";
 
 import { IOnlineUser, updateUsersOnline } from "../store/slices/socketSlice";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useLogout } from "./useLogout";
 
 export const useSocket = () => {
+  const [appSocket, setAppSocket] = useState<any>(null);
   const userInfo = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
   const logout = useLogout();
 
-  const socketRef = useRef<any>();
-
   useEffect(() => {
-    if (!userInfo.token) return;
-
     const socket = io("http://localhost:5000", {
       query: { token: userInfo.token },
     });
+
+    setAppSocket(socket);
 
     socket.on("connect_error", (err) => {
       logout(socket);
@@ -46,9 +45,9 @@ export const useSocket = () => {
     socket.on("getMessage", (message: any) => {
       console.log("new message");
     });
-
-    socketRef.current = socket;
   }, [userInfo, dispatch]);
 
-  return socketRef.current;
+  const getSocket = () => appSocket;
+
+  return { getSocket };
 };

@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import Button from "../../components/Button";
-import Message from "../../components/Message/Message";
+import Message, { IMessage } from "../../components/Message/Message";
 
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import { useLogout } from "../../hooks/useLogout";
@@ -20,21 +20,16 @@ type Inputs = {
   textInput: string;
 };
 
-interface newMessage {
-  _id: string;
-  textInput: string;
-}
-
 interface IParams {
   id: string;
   receiverName: string;
 }
 
 interface IChatScreen {
-  appSocket: any;
+  getSocket: any;
 }
 
-const ChatScreen = ({ appSocket }: IChatScreen) => {
+const ChatScreen = ({ getSocket }: IChatScreen) => {
   const [messagesList, setMessagesList] = useState<any[]>([]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -44,9 +39,7 @@ const ChatScreen = ({ appSocket }: IChatScreen) => {
   const userInfo = useAppSelector((state) => state.user);
   const onlineUsers = useAppSelector((state) => state.socketSlice);
 
-  const { authAxiosGet, authAxiosPost, authAxiosPut } = useAxios(
-    userInfo.token
-  );
+  const { authAxiosGet, authAxiosPut } = useAxios(userInfo.token);
   const logout = useLogout();
 
   const { register, handleSubmit, reset } = useForm<Inputs>();
@@ -62,9 +55,9 @@ const ChatScreen = ({ appSocket }: IChatScreen) => {
     return data;
   };
 
-  const handleUnread = async (messages: any) => {
+  const handleUnread = async (messages: IMessage[]) => {
     const readList = messages.filter(
-      (element: any) => element.isRead || element.sender === userInfo._id
+      (element: IMessage) => element.isRead || element.sender === userInfo._id
     );
 
     const unreadList = messages.filter(
@@ -79,8 +72,8 @@ const ChatScreen = ({ appSocket }: IChatScreen) => {
   };
 
   const showMessages = useCallback(
-    async (messages: any) => {
-      const updatedMessages: any = await handleUnread(messages);
+    async (messages: IMessage[]) => {
+      const updatedMessages: IMessage[] = await handleUnread(messages);
       const messagesList = updatedMessages.map((el: any) => {
         return (
           <div ref={scrollRef} key={`div${el._id}`}>
@@ -89,8 +82,10 @@ const ChatScreen = ({ appSocket }: IChatScreen) => {
               message={{
                 text: el.text,
                 sender: el.sender,
-                date: convertDate(el.messageDate),
+                conversationId,
+                messageDate: convertDate(el.messageDate),
                 isRead: el.isRead,
+                isSent: el.isSent,
               }}
               main={el.sender === userInfo._id}
             />
@@ -103,17 +98,19 @@ const ChatScreen = ({ appSocket }: IChatScreen) => {
   );
 
   const createMessage = useCallback(
-    (message: any) => {
+    (message: IMessage) => {
       return (
         <Message
           key={Math.random().toString()}
           message={{
-            text: message.textInput,
-            sender: message._id,
-            date: convertDate(Date.now()),
+            text: message.text,
+            sender: message.sender,
+            conversationId,
+            messageDate: convertDate(Date.now()),
             isRead: message.isRead,
+            isSent: message.isSent,
           }}
-          main={message._id === userInfo._id}
+          main={message.sender === userInfo._id}
         />
       );
     },
@@ -121,7 +118,7 @@ const ChatScreen = ({ appSocket }: IChatScreen) => {
   );
 
   const addNewMessage = useCallback(
-    (message: newMessage) => {
+    (message: IMessage) => {
       setMessagesList([...messagesList, createMessage(message)]);
     },
     [createMessage, messagesList]
@@ -135,24 +132,31 @@ const ChatScreen = ({ appSocket }: IChatScreen) => {
   };
 
   const sendMessage: SubmitHandler<Inputs> = async (data) => {
-    addNewMessage({ textInput: data.textInput, _id: userInfo._id });
+    const appSocket = getSocket();
+    addNewMessage({
+      text: data.textInput,
+      sender: userInfo._id,
+      conversationId,
+      isSent: false,
+    });
+
     try {
       const { data: receiverInfo } = await authAxiosGet(
         `http://localhost:5000/user/username/${receiverName}`
       );
 
       appSocket.emit("sendMessage", {
+        conversationId,
         message: data.textInput,
         receiverId: receiverInfo[0]._id,
         receiverSocketId: getUserSocketId(receiverInfo[0]._id),
         senderId: userInfo._id,
-        date: new Date().toLocaleDateString(),
+        senderSocketId: getUserSocketId(userInfo._id),
       });
 
-      await authAxiosPost(`http://localhost:5000/message`, {
-        conversationId,
-        text: data.textInput,
-      });
+      await appSocket.on("messageSent", (message: IMessage) =>
+        addNewMessage(message)
+      );
     } catch (error) {
       dispatch(removeUser());
       throw new Error("couldnt send message");
