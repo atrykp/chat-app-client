@@ -6,16 +6,18 @@ import { persistReducer } from "redux-persist";
 
 import userReducer from "../store/slices/userSlice";
 import socketSlice from "./slices/socketSlice";
+import messagesSlice from "./slices/messagesSlice";
 
 const reducers = combineReducers({
   user: userReducer,
   socketSlice: socketSlice,
+  messagesSlice: messagesSlice,
 });
 
 const persistConfig = {
   key: "root",
   storage,
-  blacklist: ["appState"],
+  blacklist: ["socketSlice", "messagesSlice"],
 };
 const persistedReducer = persistReducer(persistConfig, reducers);
 
