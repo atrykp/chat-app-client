@@ -4,6 +4,7 @@ import { io } from "socket.io-client";
 import { IOnlineUser, updateUsersOnline } from "../store/slices/socketSlice";
 import { useEffect, useState } from "react";
 import { useLogout } from "./useLogout";
+import { updateMessages } from "../store/slices/messagesSlice";
 
 export const useSocket = () => {
   const [appSocket, setAppSocket] = useState<any>(null);
@@ -41,6 +42,9 @@ export const useSocket = () => {
     });
 
     //message
+
+    socket.emit("getUnread", userInfo._id);
+    socket.on("unread", (messages) => dispatch(updateMessages(messages)));
 
     socket.on("getMessage", (message: any) => {
       console.log("new message");

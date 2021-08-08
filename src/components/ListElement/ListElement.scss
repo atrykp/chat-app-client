@@ -1,4 +1,5 @@
 .list-element-wrapper {
+  position: relative;
   display: grid;
   grid-template-columns: 30% 1fr;
   grid-template-rows: 60% 40%;
@@ -42,4 +43,20 @@
   background-color: black;
   align-self: center;
   justify-self: center;
+}
+
+.list-element-new {
+  height: 30px;
+  width: 30px;
+  position: absolute;
+  right: 2%;
+  top: 50%;
+  background-color: darkgoldenrod;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: whitesmoke;
+  font-size: 1.2rem;
 }

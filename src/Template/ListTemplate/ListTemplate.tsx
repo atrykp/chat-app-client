@@ -1,6 +1,8 @@
 import ListElement, {
   IListElement,
 } from "../../components/ListElement/ListElement";
+import { useAppSelector } from "../../hooks/redux-hooks";
+import { useLocation } from "react-router";
 
 import "./ListTemplate.scss";
 
@@ -17,6 +19,9 @@ const ListTemplate = ({
   padding,
   headerText,
 }: IListTemplate) => {
+  const unread = useAppSelector((state) => state.messagesSlice);
+  const location = useLocation();
+
   const list = listElements?.map((elem) => (
     <ListElement
       text={elem.text}
@@ -25,6 +30,11 @@ const ListTemplate = ({
       conversationId={elem.conversationId}
       key={elem.username}
       path={path}
+      unreadNumber={
+        location.pathname.search("conversations") !== -1 && elem.conversationId
+          ? unread[elem.conversationId]?.length
+          : undefined
+      }
     />
   ));
   return (

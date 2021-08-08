@@ -10,6 +10,7 @@ export interface IListElement {
   path?: string;
   callback?(): void;
   _id?: string;
+  unreadNumber?: number;
 }
 
 const ListElement = ({
@@ -20,8 +21,10 @@ const ListElement = ({
   conversationId,
   path,
   callback,
+  unreadNumber,
 }: IListElement) => {
   const history = useHistory();
+
   return (
     <li
       className="list-element-wrapper"
@@ -40,6 +43,7 @@ const ListElement = ({
 
       <h1 className="list-element-header">{username}</h1>
       <p className="list-element-paragraph">{text}</p>
+      {unreadNumber && <div className="list-element-new">{unreadNumber}</div>}
       {status && <p>{status}</p>}
     </li>
   );

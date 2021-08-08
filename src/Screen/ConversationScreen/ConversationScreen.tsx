@@ -11,6 +11,7 @@ import { useGetConversations } from "../../hooks/useGetConversations";
 
 const ConversationScreen = () => {
   const userInfo = useAppSelector((state) => state.user);
+
   const { getConversations } = useGetConversations(
     userInfo.token,
     userInfo._id
