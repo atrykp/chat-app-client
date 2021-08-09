@@ -41,7 +41,7 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
   const unread = useAppSelector((state) => state.messagesSlice);
   const onlineUsers = useAppSelector((state) => state.socketSlice);
 
-  const { authAxiosGet, authAxiosPut } = useAxios(userInfo.token);
+  const { authAxiosGet } = useAxios(userInfo.token);
   const logout = useLogout();
 
   const { register, handleSubmit, reset } = useForm<Inputs>();
@@ -57,29 +57,9 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
     return data;
   };
 
-  const handleUnread = useCallback(
-    async (messages: IMessage[]) => {
-      const readList = messages.filter(
-        (element: IMessage) => element.isRead || element.sender === userInfo._id
-      );
-
-      const unreadList = messages.filter(
-        (element: any) => !element.isRead && element.sender !== userInfo._id
-      );
-      if (!unreadList.length) return readList;
-      const { data } = await authAxiosPut(
-        "http://localhost:5000/message",
-        unreadList
-      );
-      return [...readList, ...data];
-    },
-    [userInfo._id]
-  );
-
   const showMessages = useCallback(
     async (messages: IMessage[]) => {
-      const updatedMessages: IMessage[] = await handleUnread(messages);
-      const messagesList = updatedMessages.map((el: any) => {
+      const messagesList = messages.map((el: any) => {
         return (
           <div ref={scrollRef} key={`div${el._id}`}>
             <Message
@@ -99,7 +79,7 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
       });
       setMessagesList(messagesList);
     },
-    [userInfo._id, conversationId, handleUnread]
+    [userInfo._id, conversationId]
   );
 
   const createMessage = useCallback(
@@ -122,11 +102,19 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
     [userInfo._id]
   );
 
-  const addNewMessage = useCallback(
+  const handleSendMessage = useCallback(
     (message: IMessage) => {
       setMessagesList([...messagesList, createMessage(message)]);
     },
     [createMessage, messagesList]
+  );
+
+  const getNewMessages = useCallback(
+    (messages: IMessage[]) => {
+      const messagesArr = messages.map((el) => createMessage(el));
+      setMessagesList([...messagesList, ...messagesArr]);
+    },
+    [messagesList]
   );
 
   const getUserSocketId = (userId: string) => {
@@ -138,7 +126,7 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
 
   const sendMessage: SubmitHandler<Inputs> = async (data) => {
     const appSocket = getSocket();
-    addNewMessage({
+    handleSendMessage({
       text: data.textInput,
       sender: userInfo._id,
       conversationId,
@@ -160,7 +148,7 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
       });
 
       await appSocket.on("messageSent", (message: IMessage) =>
-        addNewMessage(message)
+        handleSendMessage(message)
       );
     } catch (error) {
       dispatch(removeUser());
@@ -185,6 +173,7 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
 
   useEffect(() => {
     if (unread[conversationId]) {
+      getNewMessages(unread[conversationId]);
       const updatedUnread = { ...unread };
       delete updatedUnread[conversationId];
       dispatch(updateMessages(updatedUnread));
