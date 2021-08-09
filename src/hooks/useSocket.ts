@@ -4,11 +4,13 @@ import { io } from "socket.io-client";
 import { IOnlineUser, updateUsersOnline } from "../store/slices/socketSlice";
 import { useEffect, useState } from "react";
 import { useLogout } from "./useLogout";
-import { updateMessages } from "../store/slices/messagesSlice";
+import { addMessage, updateMessages } from "../store/slices/messagesSlice";
+import { IMessage } from "../components/Message/Message";
 
 export const useSocket = () => {
   const [appSocket, setAppSocket] = useState<any>(null);
   const userInfo = useAppSelector((state) => state.user);
+  const unreadMessages = useAppSelector((state) => state.messagesSlice);
   const dispatch = useAppDispatch();
   const logout = useLogout();
 
@@ -45,11 +47,23 @@ export const useSocket = () => {
 
     socket.emit("getUnread", userInfo._id);
     socket.on("unread", (messages) => dispatch(updateMessages(messages)));
+  }, []);
 
-    socket.on("getMessage", (message: any) => {
-      console.log("new message");
+  useEffect(() => {
+    if (!appSocket) return;
+    appSocket.off("getMessage");
+    appSocket.on("getMessage", (message: IMessage) => {
+      if (unreadMessages[message.conversationId]) {
+        dispatch(
+          addMessage({ conversationId: message.conversationId, message })
+        );
+      } else {
+        const updatedMessages: any = { ...unreadMessages };
+        updatedMessages[message.conversationId] = [message];
+        dispatch(updateMessages({ ...updatedMessages }));
+      }
     });
-  }, [userInfo, dispatch]);
+  }, [unreadMessages]);
 
   const getSocket = () => appSocket;
 
