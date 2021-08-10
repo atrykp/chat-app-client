@@ -47,15 +47,15 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
   const { register, handleSubmit, reset } = useForm<Inputs>();
   const { id: conversationId, receiverName } = useParams<IParams>();
 
-  const { isLoading, isError, data } = useQuery(
+  const { isLoading, isError, data, refetch } = useQuery(
     ["getChat", userInfo.token, conversationId],
-    () => getChat(conversationId)
+    async () => {
+      const { data } = await authAxiosGet(
+        `http://localhost:5000/message/${conversationId}`
+      );
+      return data;
+    }
   );
-
-  const getChat = async (id: string) => {
-    const { data } = await authAxiosGet(`http://localhost:5000/message/${id}`);
-    return data;
-  };
 
   const showMessages = useCallback(
     async (messages: IMessage[]) => {
@@ -146,10 +146,6 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
         senderId: userInfo._id,
         senderSocketId: getUserSocketId(userInfo._id),
       });
-
-      await appSocket.on("messageSent", (message: IMessage) =>
-        handleSendMessage(message)
-      );
     } catch (error) {
       dispatch(removeUser());
       throw new Error("couldnt send message");
@@ -162,6 +158,25 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
   }, [data, showMessages]);
 
   useEffect(() => {
+    const appSocket = getSocket();
+    if (appSocket) {
+      appSocket.on("displayedMessages", (messages: any) => {
+        refetch();
+      });
+      appSocket.on("messageSent", (message: IMessage) => {
+        refetch();
+      });
+    }
+
+    return () => {
+      if (appSocket) {
+        appSocket.off("displayedMessages");
+        appSocket.off("messageSent");
+      }
+    };
+  }, [getSocket, refetch]);
+
+  useEffect(() => {
     if (isError) {
       logout();
     }
@@ -172,8 +187,12 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
   }, [messagesList]);
 
   useEffect(() => {
-    if (unread[conversationId]) {
-      getNewMessages(unread[conversationId]);
+    const unreadMessages = unread[conversationId];
+    if (unreadMessages) {
+      getNewMessages(unreadMessages);
+      const appSocket = getSocket();
+      const socketId = getUserSocketId(unreadMessages[0].sender);
+      appSocket.emit("readMessages", { unreadMessages, socketId });
       const updatedUnread = { ...unread };
       delete updatedUnread[conversationId];
       dispatch(updateMessages(updatedUnread));

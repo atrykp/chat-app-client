@@ -63,7 +63,7 @@ export const useSocket = () => {
         dispatch(updateMessages({ ...updatedMessages }));
       }
     });
-  }, [unreadMessages]);
+  }, [unreadMessages, appSocket, dispatch]);
 
   const getSocket = () => appSocket;
 
