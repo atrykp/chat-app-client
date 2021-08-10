@@ -16,8 +16,11 @@ import "./UserScreen.scss";
 export interface INewData {
   [key: string]: string;
 }
+interface IUserScreen {
+  getSocket: any;
+}
 
-const UserScreen = () => {
+const UserScreen = ({ getSocket }: IUserScreen) => {
   const {
     register,
     handleSubmit,
@@ -130,7 +133,7 @@ const UserScreen = () => {
         <p onClick={() => setIsEdit(true)}>edit data</p>
       </div>
       <div className="user-screen-buttons">
-        <Button callback={() => logout()}>Logout</Button>
+        <Button callback={() => logout(getSocket())}>Logout</Button>
         <Button styles="user-screen-remove" callback={() => setIsConfirm(true)}>
           Remove Account
         </Button>

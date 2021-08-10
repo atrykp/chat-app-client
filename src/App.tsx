@@ -21,7 +21,7 @@ function App() {
         <StartScreen />
       </Route>
       <Route path="/user" exact>
-        <UserScreen />
+        <UserScreen getSocket={getSocket} />
       </Route>
       <Route path="/login" exact>
         <LoginScreen />

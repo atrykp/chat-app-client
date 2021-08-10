@@ -15,6 +15,7 @@ export const useSocket = () => {
   const logout = useLogout();
 
   useEffect(() => {
+    if (!userInfo._id) return;
     const socket = io("http://localhost:5000", {
       query: { token: userInfo.token },
     });
@@ -40,6 +41,8 @@ export const useSocket = () => {
     // add user to online users array
     socket.emit("userId", userInfo._id);
     socket?.on("usersOnline", (users: IOnlineUser[]) => {
+      console.log(users);
+
       dispatch(updateUsersOnline(users));
     });
 
@@ -47,7 +50,7 @@ export const useSocket = () => {
 
     socket.emit("getUnread", userInfo._id);
     socket.on("unread", (messages) => dispatch(updateMessages(messages)));
-  }, []);
+  }, [userInfo, dispatch, logout]);
 
   useEffect(() => {
     if (!appSocket) return;
