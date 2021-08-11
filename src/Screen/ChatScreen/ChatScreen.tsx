@@ -66,7 +66,9 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
             text: message.text,
             sender: message.sender,
             conversationId,
-            messageDate: convertDate(Date.now()),
+            messageDate: message.messageDate
+              ? convertDate(message.messageDate)
+              : convertDate(Date.now()),
             isRead: message.isRead,
             isSent: message.isSent,
           }}

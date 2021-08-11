@@ -18,9 +18,17 @@ const Message = ({ message, main }: IMessageObj) => {
   return (
     <div className={main ? "message-wrapper-main" : "message-wrapper"}>
       <div className={main ? "message-main" : "message"}>
-        <p className="message-text">{message.text}</p>
-        <div className="message-info-wrapper">
-          <p className="message-date">{message.messageDate}</p>
+        <p className={main ? "message-text-main" : "message-text"}>
+          {message.text}
+        </p>
+        <div
+          className={
+            main ? "message-info-wrapper-main" : "message-info-wrapper"
+          }
+        >
+          <p className={main ? "message-date-main" : "message-date"}>
+            {message.messageDate}
+          </p>
           {main && (
             <div
               className={

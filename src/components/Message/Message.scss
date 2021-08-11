@@ -22,13 +22,24 @@
 }
 .message-text {
   font-size: 1rem;
+  padding: 3px;
+  &-main {
+    @extend .message-text;
+    text-align: end;
+  }
 }
 .message-date {
   justify-self: flex-end;
+  color: #0c0f0f;
+  font-size: 0.55rem;
+  &-main {
+    @extend .message-date;
+    color: rgb(56, 56, 56);
+  }
 }
 .message-status-unread {
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
   background-image: url("../../images/envelope.svg");
   background-position: center;
   background-size: contain;
@@ -37,25 +48,19 @@
 }
 
 .message-status-read {
-  width: 20px;
-  height: 20px;
+  @extend .message-status-unread;
   background-image: url("../../images/mail.svg");
-  background-position: center;
-  background-size: contain;
-  background-repeat: no-repeat;
-  margin-left: 5px;
 }
 .message-status-unsent {
-  width: 20px;
-  height: 20px;
+  @extend .message-status-unread;
   background-image: url("../../images/reload.svg");
-  background-position: center;
-  background-size: contain;
-  background-repeat: no-repeat;
-  margin-left: 5px;
 }
 
 .message-info-wrapper {
   display: flex;
   align-items: center;
+  &-main {
+    @extend .message-info-wrapper;
+    justify-content: flex-end;
+  }
 }
