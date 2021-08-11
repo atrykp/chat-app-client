@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from "./redux-hooks";
 import { io } from "socket.io-client";
 
 import { IOnlineUser, updateUsersOnline } from "../store/slices/socketSlice";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLogout } from "./useLogout";
 import { addMessage, updateMessages } from "../store/slices/messagesSlice";
 import { IMessage } from "../components/Message/Message";
@@ -68,7 +68,7 @@ export const useSocket = () => {
     });
   }, [unreadMessages, appSocket, dispatch]);
 
-  const getSocket = () => appSocket;
+  const getSocket = useCallback(() => appSocket, [appSocket]);
 
   return { getSocket };
 };

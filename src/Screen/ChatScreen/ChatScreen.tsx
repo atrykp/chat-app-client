@@ -57,36 +57,11 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
     }
   );
 
-  const showMessages = useCallback(
-    async (messages: IMessage[]) => {
-      const messagesList = messages.map((el: any) => {
-        return (
-          <div ref={scrollRef} key={`div${el._id}`}>
-            <Message
-              key={el._id}
-              message={{
-                text: el.text,
-                sender: el.sender,
-                conversationId,
-                messageDate: convertDate(el.messageDate),
-                isRead: el.isRead,
-                isSent: el.isSent,
-              }}
-              main={el.sender === userInfo._id}
-            />
-          </div>
-        );
-      });
-      setMessagesList(messagesList);
-    },
-    [userInfo._id, conversationId]
-  );
-
   const createMessage = useCallback(
     (message: IMessage) => {
       return (
         <Message
-          key={Math.random().toString()}
+          key={message._id ? message._id : Math.random().toString()}
           message={{
             text: message.text,
             sender: message.sender,
@@ -99,7 +74,21 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
         />
       );
     },
-    [userInfo._id]
+    [userInfo._id, conversationId]
+  );
+
+  const showMessages = useCallback(
+    async (messages: IMessage[]) => {
+      const messagesList = messages.map((el: any) => {
+        return (
+          <div ref={scrollRef} key={`div${el._id}`}>
+            {createMessage(el)}
+          </div>
+        );
+      });
+      setMessagesList(messagesList);
+    },
+    [createMessage]
   );
 
   const handleSendMessage = useCallback(
@@ -114,15 +103,18 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
       const messagesArr = messages.map((el) => createMessage(el));
       setMessagesList([...messagesList, ...messagesArr]);
     },
-    [messagesList]
+    [messagesList, createMessage]
   );
 
-  const getUserSocketId = (userId: string) => {
-    const receiver: IOnlineUser[] = onlineUsers.onlineUsers.filter(
-      (element: IOnlineUser) => element.userId === userId
-    );
-    if (!!receiver.length) return receiver[0].socketId;
-  };
+  const getUserSocketId = useCallback(
+    (userId: string) => {
+      const receiver: IOnlineUser[] = onlineUsers.onlineUsers.filter(
+        (element: IOnlineUser) => element.userId === userId
+      );
+      if (!!receiver.length) return receiver[0].socketId;
+    },
+    [onlineUsers]
+  );
 
   const sendMessage: SubmitHandler<Inputs> = async (data) => {
     const appSocket = getSocket();
@@ -197,7 +189,14 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
       delete updatedUnread[conversationId];
       dispatch(updateMessages(updatedUnread));
     }
-  }, [conversationId, dispatch, unread]);
+  }, [
+    conversationId,
+    dispatch,
+    unread,
+    getNewMessages,
+    getSocket,
+    getUserSocketId,
+  ]);
 
   return (
     <div className="chat-screen-wrapper">
@@ -210,7 +209,12 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
         </button>
         <p className="chat-bar-header">{receiverName}</p>
       </div>
-      <div className="chat-screen-conversation">{messagesList}</div>
+      {isLoading ? (
+        <h1>Loading</h1>
+      ) : (
+        <div className="chat-screen-conversation">{messagesList}</div>
+      )}
+
       <div className="chat-screen-form-wrapper">
         <form
           action=""
