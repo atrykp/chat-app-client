@@ -56,7 +56,8 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
         `http://localhost:5000/message/${conversationId}`
       );
       return data;
-    }
+    },
+    { retry: 1, staleTime: 1000 }
   );
 
   const createMessage = useCallback(

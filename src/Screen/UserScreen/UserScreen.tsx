@@ -21,41 +21,54 @@ interface IUserScreen {
 }
 
 const UserScreen = ({ getSocket }: IUserScreen) => {
+  const [isConfirm, setIsConfirm] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const [isConfirm, setIsConfirm] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
-  const userInfo = useAppSelector((state) => state.user);
-  const history = useHistory();
-  const logout = useLogout();
+
   const dispatch = useAppDispatch();
+  const userInfo = useAppSelector((state) => state.user);
+
+  const history = useHistory();
+
+  const logout = useLogout();
   const { authAxiosDelete, authAxiosPut } = useAxios(userInfo.token);
 
   const removeAccount = async () => {
-    await authAxiosDelete("http://localhost:5000/user");
-    logout();
+    try {
+      await authAxiosDelete("http://localhost:5000/user");
+      logout();
+    } catch (error) {
+      logout();
+    }
   };
+
   const closeEditModal = () => {
     setIsEdit(false);
   };
+
   const onSubmit = async (data: any) => {
-    const newData: INewData = {};
-    for (let key in data) {
-      if (data[key]) {
-        newData[key] = data[key];
+    try {
+      const newData: INewData = {};
+      for (let key in data) {
+        if (data[key]) {
+          newData[key] = data[key];
+        }
       }
+      const { data: updatedUser } = await authAxiosPut(
+        "http://localhost:5000/user",
+        newData
+      );
+
+      await dispatch(updateUser(updatedUser));
+
+      setIsEdit(false);
+    } catch (error) {
+      logout();
     }
-    const { data: updatedUser } = await authAxiosPut(
-      "http://localhost:5000/user",
-      newData
-    );
-
-    await dispatch(updateUser(updatedUser));
-
-    setIsEdit(false);
   };
 
   return (

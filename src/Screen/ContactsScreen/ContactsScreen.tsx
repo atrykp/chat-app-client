@@ -42,7 +42,7 @@ const ContactsScreen = () => {
   const { isLoading, isError, data } = useQuery(
     "getConversationsList",
     () => getConversations(),
-    { retry: 2, staleTime: 1000 }
+    { retry: false, staleTime: 1000 }
   );
 
   const showSearchWindow = () => {
@@ -88,6 +88,10 @@ const ContactsScreen = () => {
   };
 
   useEffect(() => {
+    if (isError) logout();
+  }, [isError, logout]);
+
+  useEffect(() => {
     if (data && onlineArr) {
       const newArr = data?.filter((element) => {
         let isOnline = false;
@@ -125,14 +129,20 @@ const ContactsScreen = () => {
           </div>
         </div>
       )}
-
-      <ListTemplate
-        listElements={onlineUsers!}
-        path="chat"
-        padding
-        headerText="online"
-      />
-      <ListTemplate listElements={data!} path="chat" headerText="all" />
+      {isLoading ? (
+        <h1>loading...</h1>
+      ) : (
+        <>
+          {" "}
+          <ListTemplate
+            listElements={onlineUsers!}
+            path="chat"
+            padding
+            headerText="online"
+          />
+          <ListTemplate listElements={data!} path="chat" headerText="all" />
+        </>
+      )}
     </>
   );
 };

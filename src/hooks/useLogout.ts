@@ -7,7 +7,7 @@ export const useLogout = () => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const logout = (socket?: any) => {
-    history.push("/");
+    history.push("/start/You have been logged out, try again");
     dispatch(removeUser());
     socket?.disconnect();
   };

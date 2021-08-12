@@ -17,7 +17,7 @@ function App() {
 
   return (
     <Switch>
-      <Route path="/" exact>
+      <Route path="/start/:message?" exact>
         <StartScreen />
       </Route>
       <Route path="/user" exact>
@@ -38,7 +38,7 @@ function App() {
       <Route path="/chat/:id/:receiverName" exact>
         <ChatScreen getSocket={getSocket} />
       </Route>
-      <Redirect to="/" />
+      <Redirect to="/start" />
     </Switch>
   );
 }

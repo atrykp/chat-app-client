@@ -19,7 +19,7 @@ const ConversationScreen = () => {
   const { isLoading, isError, data } = useQuery(
     "getConversations",
     () => getConversations(),
-    { retry: 2, staleTime: 1000 }
+    { retry: 1, staleTime: 1000 }
   );
   const logout = useLogout();
 
