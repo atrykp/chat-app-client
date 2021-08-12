@@ -32,8 +32,10 @@ interface IChatScreen {
 
 const ChatScreen = ({ getSocket }: IChatScreen) => {
   const [messagesList, setMessagesList] = useState<any[]>([]);
+  const [canSend, setCanSend] = useState(true);
 
   const scrollRef = useRef<HTMLDivElement>(null);
+  const timerId = useRef<NodeJS.Timeout>();
 
   const history = useHistory();
   const dispatch = useAppDispatch();
@@ -118,34 +120,51 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
     [onlineUsers]
   );
 
-  const sendMessage: SubmitHandler<Inputs> = async (data) => {
-    const appSocket = getSocket();
-    handleSendMessage({
-      text: data.textInput,
-      sender: userInfo._id,
-      conversationId,
-      isSent: false,
-    });
-
-    try {
-      const { data: receiverInfo } = await authAxiosGet(
-        `http://localhost:5000/user/username/${receiverName}`
-      );
-
-      appSocket.emit("sendMessage", {
+  const sendMessage: SubmitHandler<Inputs> = useCallback(
+    async (data) => {
+      setCanSend(false);
+      timerId.current = setTimeout(() => {
+        setCanSend(true);
+      }, 500);
+      const appSocket = getSocket();
+      handleSendMessage({
+        text: data.textInput,
+        sender: userInfo._id,
         conversationId,
-        message: data.textInput,
-        receiverId: receiverInfo[0]._id,
-        receiverSocketId: getUserSocketId(receiverInfo[0]._id),
-        senderId: userInfo._id,
-        senderSocketId: getUserSocketId(userInfo._id),
+        isSent: false,
       });
-    } catch (error) {
-      dispatch(removeUser());
-      throw new Error("couldnt send message");
-    }
-    reset();
-  };
+
+      try {
+        const { data: receiverInfo } = await authAxiosGet(
+          `http://localhost:5000/user/username/${receiverName}`
+        );
+
+        appSocket.emit("sendMessage", {
+          conversationId,
+          message: data.textInput,
+          receiverId: receiverInfo[0]._id,
+          receiverSocketId: getUserSocketId(receiverInfo[0]._id),
+          senderId: userInfo._id,
+          senderSocketId: getUserSocketId(userInfo._id),
+        });
+      } catch (error) {
+        dispatch(removeUser());
+        throw new Error("couldnt send message");
+      }
+      reset();
+    },
+    [
+      authAxiosGet,
+      dispatch,
+      getSocket,
+      getUserSocketId,
+      reset,
+      conversationId,
+      handleSendMessage,
+      userInfo._id,
+      receiverName,
+    ]
+  );
 
   useEffect(() => {
     if (data?.length) showMessages(data);
@@ -174,6 +193,9 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
     if (isError) {
       logout();
     }
+    return () => {
+      if (timerId.current) clearTimeout(timerId.current);
+    };
   }, [isError, logout]);
 
   useEffect(() => {
@@ -221,7 +243,9 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
         <form
           action=""
           className="chat-screen-form"
-          onSubmit={handleSubmit(sendMessage)}
+          onSubmit={
+            canSend ? handleSubmit(sendMessage) : (e) => e.preventDefault()
+          }
         >
           <input
             className="chat-screen-form-input"
