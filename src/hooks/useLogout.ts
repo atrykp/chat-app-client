@@ -3,11 +3,11 @@ import { useHistory } from "react-router";
 import { removeUser } from "../store/slices/userSlice";
 import { useAppDispatch } from "./redux-hooks";
 
-export const useLogout = () => {
+export const useLogout = (text = "You have been logged out, try again") => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const logout = (socket?: any) => {
-    history.push("/start/You have been logged out, try again");
+    history.push(`/start/${text}`);
     dispatch(removeUser());
     socket?.disconnect();
   };

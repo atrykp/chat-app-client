@@ -34,7 +34,7 @@ const UserScreen = ({ getSocket }: IUserScreen) => {
 
   const history = useHistory();
 
-  const logout = useLogout();
+  const logout = useLogout("You have been logged out");
   const { authAxiosDelete, authAxiosPut } = useAxios(userInfo.token);
 
   const removeAccount = async () => {

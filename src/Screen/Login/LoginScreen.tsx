@@ -5,13 +5,16 @@ import Card from "../../components/Card";
 import Button from "../../components/Button";
 import InfoBar from "../../components/InfoBar";
 import "./LoginScreen.scss";
-import { useAppDispatch } from "../../hooks/redux-hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import { loginUser } from "../../thunk-actions/user-thunk-actions";
 
 const LoginScreen = () => {
   const [currentError, setCurrentError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
   const history = useHistory();
+
+  const userInfo = useAppSelector((state) => state.user);
 
   const {
     register,
@@ -31,9 +34,18 @@ const LoginScreen = () => {
     }
   }, [errors.email, errors.password]);
 
+  useEffect(() => {
+    if (userInfo.token) {
+      history.push("/conversations");
+    } else if (isLoading && !userInfo.token) {
+      setCurrentError("Can't log in, please try again");
+    }
+  }, [userInfo, history, isLoading]);
+
   const onSubmit = async (data: { email: string; password: string }) => {
-    await dispatch(loginUser(data));
-    history.push("/conversations");
+    const userData = await loginUser(data);
+    await dispatch(userData);
+    setIsLoading(true);
   };
 
   return (
