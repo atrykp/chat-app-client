@@ -14,6 +14,7 @@ import { useLogout } from "../../hooks/useLogout";
 import "./ContactsScreen.scss";
 import { useGetConversations } from "../../hooks/useGetConversations";
 import { useQuery } from "react-query";
+import Loader from "../../components/Loader/Loader";
 
 interface IUserElement {
   userName: string;
@@ -130,7 +131,7 @@ const ContactsScreen = () => {
         </div>
       )}
       {isLoading ? (
-        <h1>loading...</h1>
+        <Loader />
       ) : (
         <>
           {" "}

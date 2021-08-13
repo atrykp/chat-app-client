@@ -1,0 +1,27 @@
+.loader-wrapper {
+  height: 100vh;
+  width: 100%;
+  background-color: rgba(10, 10, 10, 0.541);
+  position: absolute;
+  display: grid;
+  justify-items: center;
+  align-items: flex-end;
+  backdrop-filter: blur(2px);
+  color: whitesmoke;
+  h1 {
+    margin-bottom: 10px;
+  }
+}
+.loader-spinner {
+  height: 30px;
+  width: 30px;
+  background-image: url("../../images/loading.svg");
+  align-self: flex-start;
+  animation: spinnerLoading 5s infinite linear;
+}
+
+@keyframes spinnerLoading {
+  100% {
+    transform: rotate(7200deg);
+  }
+}
