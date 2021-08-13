@@ -8,6 +8,8 @@ import ListTemplate from "../../Template/ListTemplate/ListTemplate";
 import { useLogout } from "../../hooks/useLogout";
 
 import { useGetConversations } from "../../hooks/useGetConversations";
+import Loader from "../../components/Loader/Loader";
+import InfoBar from "../../components/InfoBar";
 
 const ConversationScreen = () => {
   const userInfo = useAppSelector((state) => state.user);
@@ -32,8 +34,8 @@ const ConversationScreen = () => {
   return (
     <div>
       <NavBar />
-      {isLoading && <h1 style={{ position: "absolute" }}>loading</h1>}
-      {isError && <h1 style={{ position: "absolute" }}>error</h1>}
+      {isLoading && <Loader />}
+      {isError && <InfoBar text={"Something went wrong"} isOpen />}
       <ListTemplate listElements={data!} path="chat" padding />
     </div>
   );

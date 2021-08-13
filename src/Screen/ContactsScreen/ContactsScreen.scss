@@ -8,6 +8,7 @@
   position: absolute;
   background-color: #79c3f5;
   width: 90%;
+  max-width: 500px;
   height: 80vh;
   top: 50%;
   left: 50%;
@@ -49,6 +50,12 @@
   margin-left: -10px;
   background-color: #1a2b36;
   color: whitesmoke;
+  background-image: url("../../images/loupe.svg");
+  background-size: 50%;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  width: 50px;
 }
 
 .close-search-btn {
@@ -61,6 +68,7 @@
   top: -5%;
   font-size: 1.2rem;
   font-weight: bold;
+  cursor: pointer;
 }
 .search-result-wrapper {
   position: absolute;
@@ -76,5 +84,10 @@
   font-size: 1.4rem;
   color: #1a2b36;
   font-weight: bold;
-  overflow-y: scroll;
+}
+.search-results-box .search-box-empty {
+  color: rgb(56, 56, 56);
+  font-size: 1rem;
+  text-align: center;
+  padding-top: 20px;
 }

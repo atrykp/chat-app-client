@@ -13,7 +13,12 @@ const NavBar = ({ callback }: INavBar) => {
 
   return (
     <div className="navbar-wrapper">
-      <h1>Chat App</h1>
+      <h1
+        className="navbar-logo"
+        onClick={() => history.push("./conversations")}
+      >
+        Chat App
+      </h1>
       <div
         className="navbar-user-icon"
         onClick={() => history.push(`${userInfo._id ? "/user" : "/"}`)}

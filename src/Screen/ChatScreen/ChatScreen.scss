@@ -20,16 +20,45 @@
   border: none;
   color: whitesmoke;
   margin: 0 10px;
+  cursor: pointer;
+  background-image: url("../../images/backW.svg");
+  background-size: 55%;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 60px;
+  height: 60px;
 }
 .chat-screen-conversation {
   height: 80vh;
   width: 100%;
   padding: 1%;
   overflow-y: scroll;
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 2px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 .chat-screen-form-wrapper {
   height: 10vh;
-  background-color: #395d75;
+  background-color: #c3d8e6;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -43,14 +72,17 @@
 
 .chat-screen-form {
   width: 95%;
+  max-width: 650px;
   margin: 0 auto;
   height: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .chat-screen-form-input {
   width: 68%;
+  max-width: 500px;
   height: 50px;
   margin-right: 2%;
   border-radius: 10px;
@@ -59,6 +91,7 @@
   font-size: 1.5rem;
   padding: 0 15px;
   color: rgb(42, 42, 42);
+  border: 1px solid #395d75;
 }
 .chat-screen-form-input:focus {
   border: 2px solid rgb(255, 174, 0);
@@ -66,4 +99,6 @@
 .send-button {
   width: 30%;
   height: 50px;
+  max-width: 150px;
+  margin: 0;
 }

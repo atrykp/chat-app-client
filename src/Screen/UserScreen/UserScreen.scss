@@ -38,6 +38,7 @@
   text-decoration: underline;
   text-align: end;
   margin-top: 20px;
+  cursor: pointer;
 }
 
 .user-screen-data span {
@@ -75,6 +76,7 @@
 }
 .user-screen-edit {
   width: 95%;
+  max-width: 450px;
   min-height: 50vh;
   position: absolute;
   background-color: #395d75;

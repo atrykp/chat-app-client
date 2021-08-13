@@ -16,6 +16,7 @@ import "./ChatScreen.scss";
 import { convertDate } from "../../utils/convertDate";
 import { IOnlineUser } from "../../store/slices/socketSlice";
 import { updateMessages } from "../../store/slices/messagesSlice";
+import Loader from "../../components/Loader/Loader";
 
 type Inputs = {
   textInput: string;
@@ -225,20 +226,17 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
 
   return (
     <div className="chat-screen-wrapper">
+      {isLoading && <Loader />}
+
       <div className="chat-screen-bar">
         <button
           className="chat-bar-button"
           onClick={() => history.push("/conversations")}
-        >
-          {"<"}
-        </button>
+        ></button>
         <p className="chat-bar-header">{receiverName}</p>
       </div>
-      {isLoading ? (
-        <h1>Loading</h1>
-      ) : (
-        <div className="chat-screen-conversation">{messagesList}</div>
-      )}
+
+      <div className="chat-screen-conversation">{messagesList}</div>
 
       <div className="chat-screen-form-wrapper">
         <form

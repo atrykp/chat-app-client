@@ -119,12 +119,16 @@ const ContactsScreen = () => {
             </button>
             <form action="" className="search-contact-wrapper">
               <input type="text" placeholder="username" ref={searchRef} />
-              <button onClick={(e) => handleSearch(e)}>{"->"}</button>
+              <button onClick={(e) => handleSearch(e)}></button>
             </form>
             <div className="search-result-wrapper">
               <p>Results:</p>
               <div className="search-results-box">
-                {!!usersList.length ? usersList : <h2>empty</h2>}
+                {!!usersList.length ? (
+                  usersList
+                ) : (
+                  <p className="search-box-empty">empty</p>
+                )}
               </div>
             </div>
           </div>
