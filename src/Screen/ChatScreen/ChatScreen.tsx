@@ -33,6 +33,7 @@ interface IChatScreen {
 
 const ChatScreen = ({ getSocket }: IChatScreen) => {
   const [messagesList, setMessagesList] = useState<any[]>([]);
+  const [receiverInfo, setReceiverInfo] = useState<any>();
   const [canSend, setCanSend] = useState(true);
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -41,6 +42,7 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const userInfo = useAppSelector((state) => state.user);
+  const usersOnline = useAppSelector((state) => state.socketSlice.onlineUsers);
   const unread = useAppSelector((state) => state.messagesSlice);
   const onlineUsers = useAppSelector((state) => state.socketSlice);
 
@@ -137,15 +139,12 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
       });
 
       try {
-        const { data: receiverInfo } = await authAxiosGet(
-          `http://localhost:5000/user/username/${receiverName}`
-        );
-
+        if (!receiverInfo) return;
         appSocket.emit("sendMessage", {
           conversationId,
           message: data.textInput,
-          receiverId: receiverInfo[0]._id,
-          receiverSocketId: getUserSocketId(receiverInfo[0]._id),
+          receiverId: receiverInfo._id,
+          receiverSocketId: getUserSocketId(receiverInfo._id),
           senderId: userInfo._id,
           senderSocketId: getUserSocketId(userInfo._id),
         });
@@ -156,7 +155,6 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
       reset();
     },
     [
-      authAxiosGet,
       dispatch,
       getSocket,
       getUserSocketId,
@@ -164,9 +162,21 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
       conversationId,
       handleSendMessage,
       userInfo._id,
-      receiverName,
+
+      receiverInfo,
     ]
   );
+
+  const getReceiverInfo = useCallback(async () => {
+    const { data: receiverData } = await authAxiosGet(
+      `http://localhost:5000/user/username/${receiverName}`
+    );
+    setReceiverInfo(receiverData[0]);
+  }, [receiverName, authAxiosGet]);
+
+  useEffect(() => {
+    getReceiverInfo();
+  }, [usersOnline, getReceiverInfo]);
 
   useEffect(() => {
     if (data?.length) showMessages(data);
@@ -233,7 +243,14 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
           className="chat-bar-button"
           onClick={() => history.push("/conversations")}
         ></button>
-        <p className="chat-bar-header">{receiverName}</p>
+        <p className="chat-bar-header">
+          {receiverName}
+          <span>
+            {receiverInfo?.online === "online"
+              ? receiverInfo?.online
+              : `last seen: ${convertDate(parseInt(receiverInfo?.online))}`}
+          </span>
+        </p>
       </div>
 
       <div className="chat-screen-conversation">{messagesList}</div>
