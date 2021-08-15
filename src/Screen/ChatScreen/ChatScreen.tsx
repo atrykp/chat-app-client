@@ -34,10 +34,14 @@ interface IChatScreen {
 const ChatScreen = ({ getSocket }: IChatScreen) => {
   const [messagesList, setMessagesList] = useState<any[]>([]);
   const [receiverInfo, setReceiverInfo] = useState<any>();
+  const [isThrottle, setIsThrottle] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const [canSend, setCanSend] = useState(true);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const timerId = useRef<NodeJS.Timeout>();
+  const typingTimerId = useRef<NodeJS.Timeout>();
+  const sendTimerId = useRef<NodeJS.Timeout>();
 
   const history = useHistory();
   const dispatch = useAppDispatch();
@@ -124,10 +128,17 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
     [onlineUsers]
   );
 
+  const setThrottle = () => {
+    setIsThrottle(true);
+    timerId.current = setTimeout(() => {
+      setIsThrottle(false);
+    }, 500);
+  };
+
   const sendMessage: SubmitHandler<Inputs> = useCallback(
     async (data) => {
       setCanSend(false);
-      timerId.current = setTimeout(() => {
+      sendTimerId.current = setTimeout(() => {
         setCanSend(true);
       }, 500);
       const appSocket = getSocket();
@@ -162,7 +173,6 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
       conversationId,
       handleSendMessage,
       userInfo._id,
-
       receiverInfo,
     ]
   );
@@ -173,6 +183,16 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
     );
     setReceiverInfo(receiverData[0]);
   }, [receiverName, authAxiosGet]);
+
+  const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const appSocket = getSocket();
+    if (!appSocket || e.target.value.length <= 2 || isThrottle) return;
+    appSocket.emit("writing", {
+      socketId: getUserSocketId(receiverInfo._id),
+      conversationId,
+    });
+    setThrottle();
+  };
 
   useEffect(() => {
     getReceiverInfo();
@@ -191,6 +211,15 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
       appSocket.on("messageSent", (message: IMessage) => {
         refetch();
       });
+      appSocket.on("typing", (convId: string) => {
+        if (convId === conversationId) {
+          if (typingTimerId.current) clearTimeout(typingTimerId.current);
+          setIsTyping(true);
+          typingTimerId.current = setTimeout(() => {
+            setIsTyping(false);
+          }, 1500);
+        }
+      });
     }
 
     return () => {
@@ -199,7 +228,7 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
         appSocket.off("messageSent");
       }
     };
-  }, [getSocket, refetch]);
+  }, [getSocket, refetch, conversationId]);
 
   useEffect(() => {
     if (isError) {
@@ -207,6 +236,8 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
     }
     return () => {
       if (timerId.current) clearTimeout(timerId.current);
+      if (typingTimerId.current) clearTimeout(typingTimerId.current);
+      if (sendTimerId.current) clearTimeout(sendTimerId.current);
     };
   }, [isError, logout]);
 
@@ -224,6 +255,7 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
       const updatedUnread = { ...unread };
       delete updatedUnread[conversationId];
       dispatch(updateMessages(updatedUnread));
+      setIsTyping(false);
     }
   }, [
     conversationId,
@@ -233,6 +265,7 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
     getSocket,
     getUserSocketId,
   ]);
+  const registerForm = register("textInput", { required: true });
 
   return (
     <div className="chat-screen-wrapper">
@@ -253,8 +286,10 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
         </p>
       </div>
 
-      <div className="chat-screen-conversation">{messagesList}</div>
-
+      <div className="chat-screen-conversation">
+        {messagesList}
+        {isTyping && <p className="typing-information">typing...</p>}
+      </div>
       <div className="chat-screen-form-wrapper">
         <form
           action=""
@@ -265,7 +300,11 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
         >
           <input
             className="chat-screen-form-input"
-            {...register("textInput", { required: true })}
+            {...registerForm}
+            onChange={(e) => {
+              registerForm.onChange(e);
+              handleTyping(e);
+            }}
           ></input>
           <Button styles="send-button">Send</Button>
         </form>
