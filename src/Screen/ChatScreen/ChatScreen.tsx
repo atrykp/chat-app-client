@@ -34,6 +34,7 @@ interface IChatScreen {
 const ChatScreen = ({ getSocket }: IChatScreen) => {
   const [messagesList, setMessagesList] = useState<any[]>([]);
   const [receiverInfo, setReceiverInfo] = useState<any>();
+  const [appSocket, setAppSocket] = useState(getSocket());
   const [isThrottle, setIsThrottle] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [canSend, setCanSend] = useState(true);
@@ -141,7 +142,7 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
       sendTimerId.current = setTimeout(() => {
         setCanSend(true);
       }, 500);
-      const appSocket = getSocket();
+
       handleSendMessage({
         text: data.textInput,
         sender: userInfo._id,
@@ -167,13 +168,13 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
     },
     [
       dispatch,
-      getSocket,
       getUserSocketId,
       reset,
       conversationId,
       handleSendMessage,
       userInfo._id,
       receiverInfo,
+      appSocket,
     ]
   );
 
@@ -185,7 +186,6 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
   }, [receiverName, authAxiosGet]);
 
   const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const appSocket = getSocket();
     if (!appSocket || e.target.value.length <= 2 || isThrottle) return;
     appSocket.emit("writing", {
       socketId: getUserSocketId(receiverInfo._id),
@@ -203,12 +203,15 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
   }, [data, showMessages]);
 
   useEffect(() => {
-    const appSocket = getSocket();
+    if (!appSocket) setAppSocket(getSocket());
+
     if (appSocket) {
       appSocket.on("displayedMessages", (messages: any) => {
         refetch();
       });
       appSocket.on("messageSent", (message: IMessage) => {
+        console.log("robie refatch");
+
         refetch();
       });
       appSocket.on("typing", (convId: string) => {
@@ -228,7 +231,7 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
         appSocket.off("messageSent");
       }
     };
-  }, [getSocket, refetch, conversationId]);
+  }, [getSocket, refetch, conversationId, appSocket]);
 
   useEffect(() => {
     if (isError) {
@@ -249,7 +252,7 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
     const unreadMessages = unread[conversationId];
     if (unreadMessages) {
       getNewMessages(unreadMessages);
-      const appSocket = getSocket();
+
       const socketId = getUserSocketId(unreadMessages[0].sender);
       appSocket.emit("readMessages", { unreadMessages, socketId });
       const updatedUnread = { ...unread };
@@ -264,6 +267,7 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
     getNewMessages,
     getSocket,
     getUserSocketId,
+    appSocket,
   ]);
   const registerForm = register("textInput", { required: true });
 
@@ -279,17 +283,16 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
         <p className="chat-bar-header">
           {receiverName}
           <span>
-            {receiverInfo?.online === "online"
+            {isTyping
+              ? "typing..."
+              : receiverInfo?.online === "online"
               ? receiverInfo?.online
               : `last seen: ${convertDate(parseInt(receiverInfo?.online))}`}
           </span>
         </p>
       </div>
 
-      <div className="chat-screen-conversation">
-        {messagesList}
-        {isTyping && <p className="typing-information">typing...</p>}
-      </div>
+      <div className="chat-screen-conversation">{messagesList}</div>
       <div className="chat-screen-form-wrapper">
         <form
           action=""

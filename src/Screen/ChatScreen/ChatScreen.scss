@@ -15,9 +15,12 @@
   margin-left: 20px;
 }
 .chat-bar-header span {
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   color: rgb(218, 218, 218);
   margin-left: 20px;
+  border-left: 1px solid white;
+  padding-left: 10px;
+  font-weight: bold;
 }
 
 .chat-bar-button {
@@ -107,9 +110,4 @@
   height: 50px;
   max-width: 150px;
   margin: 0;
-}
-.typing-information {
-  font-size: 0.6rem;
-  text-align: right;
-  margin-bottom: 10px;
 }
