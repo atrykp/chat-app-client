@@ -27,13 +27,20 @@ interface IParams {
   receiverName: string;
 }
 
+interface IReceiverInfo {
+  userName: string;
+  profilePicture: string;
+  _id: string;
+  online: string;
+}
+
 interface IChatScreen {
   getSocket: any;
 }
 
 const ChatScreen = ({ getSocket }: IChatScreen) => {
   const [messagesList, setMessagesList] = useState<any[]>([]);
-  const [receiverInfo, setReceiverInfo] = useState<any>();
+  const [receiverInfo, setReceiverInfo] = useState<IReceiverInfo>();
   const [appSocket, setAppSocket] = useState(getSocket());
   const [isThrottle, setIsThrottle] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
@@ -188,7 +195,7 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
   const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!appSocket || e.target.value.length <= 2 || isThrottle) return;
     appSocket.emit("writing", {
-      socketId: getUserSocketId(receiverInfo._id),
+      socketId: getUserSocketId(receiverInfo!._id),
       conversationId,
     });
     setThrottle();
@@ -210,8 +217,6 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
         refetch();
       });
       appSocket.on("messageSent", (message: IMessage) => {
-        console.log("robie refatch");
-
         refetch();
       });
       appSocket.on("typing", (convId: string) => {
@@ -280,15 +285,22 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
           className="chat-bar-button"
           onClick={() => history.push("/conversations")}
         ></button>
-        <p className="chat-bar-header">
-          {receiverName}
-          <span>
-            {isTyping
-              ? "typing..."
-              : receiverInfo?.online === "online"
-              ? receiverInfo?.online
-              : `last seen: ${convertDate(parseInt(receiverInfo?.online))}`}
-          </span>
+        <img
+          src={receiverInfo?.profilePicture}
+          alt=""
+          className="chat-screen-picture"
+        />
+        <p className="chat-bar-header">{receiverName}</p>
+        <p className="chat-bar-status">
+          {isTyping
+            ? "typing..."
+            : receiverInfo?.online === "online"
+            ? receiverInfo?.online
+            : `last seen: ${
+                receiverInfo?.online
+                  ? convertDate(parseInt(receiverInfo.online))
+                  : ""
+              }`}
         </p>
       </div>
 
