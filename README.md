@@ -11,7 +11,7 @@ This allows for quick communication.
 ## Options
 
 live chat
-create acount
+create account
 add new contacts
 show when user typing
 message status
