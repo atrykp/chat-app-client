@@ -39,7 +39,13 @@ const UserScreen = ({ getSocket }: IUserScreen) => {
 
   const removeAccount = async () => {
     try {
-      await authAxiosDelete("http://localhost:5000/user");
+      await authAxiosDelete(
+        `${
+          process.env.REACT_APP_SERVER
+            ? process.env.REACT_APP_SERVER
+            : "http://localhost:5000"
+        }/user`
+      );
       logout();
     } catch (error) {
       logout();
@@ -59,7 +65,11 @@ const UserScreen = ({ getSocket }: IUserScreen) => {
         }
       }
       const { data: updatedUser } = await authAxiosPut(
-        "http://localhost:5000/user",
+        `${
+          process.env.REACT_APP_SERVER
+            ? process.env.REACT_APP_SERVER
+            : "http://localhost:5000"
+        }/user`,
         newData
       );
 

@@ -21,7 +21,11 @@ export const registerUser =
       fData.append("password", userData.password);
 
       const { data } = await axios.post(
-        "http://localhost:5000/user/signup",
+        `${
+          process.env.REACT_APP_SERVER
+            ? process.env.REACT_APP_SERVER
+            : "http://localhost:5000"
+        }/user/signup`,
         fData
       );
 
@@ -48,7 +52,11 @@ export const loginUser =
   (userData: ILogin) => async (dispatch: AppDispatch) => {
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/user/login",
+        `${
+          process.env.REACT_APP_SERVER
+            ? process.env.REACT_APP_SERVER
+            : "http://localhost:5000"
+        }/user/login`,
         userData
       );
       dispatch(

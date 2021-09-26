@@ -16,9 +16,16 @@ export const useSocket = () => {
 
   useEffect(() => {
     if (!userInfo._id) return;
-    const socket = io("http://localhost:5000", {
-      query: { token: userInfo.token },
-    });
+    const socket = io(
+      `${
+        process.env.REACT_APP_SERVER
+          ? process.env.REACT_APP_SERVER
+          : "http://localhost:5000"
+      }`,
+      {
+        query: { token: userInfo.token },
+      }
+    );
 
     setAppSocket(socket);
 
@@ -31,18 +38,16 @@ export const useSocket = () => {
     });
 
     socket.onAny((event, ...args) => {
-      console.log(event, args);
+      // console.log(event, args);
     });
 
     socket.on("hello", (message: string) => {
-      console.log(message);
+      // console.log(message);
     });
 
     // add user to online users array
     socket.emit("userId", userInfo._id);
     socket?.on("usersOnline", (users: IOnlineUser[]) => {
-      console.log(users);
-
       dispatch(updateUsersOnline(users));
     });
 

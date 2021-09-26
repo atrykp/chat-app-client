@@ -68,7 +68,11 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
     ["getChat", userInfo.token, conversationId],
     async () => {
       const { data } = await authAxiosGet(
-        `http://localhost:5000/message/${conversationId}`
+        `${
+          process.env.REACT_APP_SERVER
+            ? process.env.REACT_APP_SERVER
+            : "http://localhost:5000"
+        }/message/${conversationId}`
       );
       return data;
     },
@@ -187,7 +191,11 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
 
   const getReceiverInfo = useCallback(async () => {
     const { data: receiverData } = await authAxiosGet(
-      `http://localhost:5000/user/username/${receiverName}`
+      `${
+        process.env.REACT_APP_SERVER
+          ? process.env.REACT_APP_SERVER
+          : "http://localhost:5000"
+      }/user/username/${receiverName}`
     );
     setReceiverInfo(receiverData[0]);
   }, [receiverName, authAxiosGet]);

@@ -54,13 +54,21 @@ const ContactsScreen = () => {
     e.preventDefault();
     try {
       const { data } = await authAxiosGet(
-        `http://localhost:5000/user/username/${searchRef.current?.value}`
+        `${
+          process.env.REACT_APP_SERVER
+            ? process.env.REACT_APP_SERVER
+            : "http://localhost:5000"
+        }/user/username/${searchRef.current?.value}`
       );
       if (data.length) {
         const users = data.map((element: IUserElement) => {
           const createConversation = async () => {
             const conversation = await authAxiosPost(
-              "http://localhost:5000/conversations",
+              `${
+                process.env.REACT_APP_SERVER
+                  ? process.env.REACT_APP_SERVER
+                  : "http://localhost:5000"
+              }/conversations`,
               { member: _id }
             );
             history.push(`chat/${conversation.data._id}/${userName}`);
