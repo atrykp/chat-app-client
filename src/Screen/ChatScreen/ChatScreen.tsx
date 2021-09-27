@@ -45,6 +45,7 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
   const [isThrottle, setIsThrottle] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [canSend, setCanSend] = useState(true);
+  const [page, setPage] = useState(0);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const timerId = useRef<NodeJS.Timeout>();
@@ -65,18 +66,18 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
   const { id: conversationId, receiverName } = useParams<IParams>();
 
   const { isLoading, isError, data, refetch } = useQuery(
-    ["getChat", userInfo.token, conversationId],
+    ["getChat", userInfo.token, conversationId, page],
     async () => {
       const { data } = await authAxiosGet(
         `${
           process.env.REACT_APP_SERVER
             ? process.env.REACT_APP_SERVER
             : "http://localhost:5000"
-        }/message/${conversationId}`
+        }/message/${conversationId}?page=${page}`
       );
       return data;
     },
-    { retry: 1, staleTime: 1000 }
+    { retry: 1, staleTime: 1000, keepPreviousData: true }
   );
 
   const createMessage = useCallback(
@@ -103,7 +104,7 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
 
   const showMessages = useCallback(
     async (messages: IMessage[]) => {
-      const messagesList = messages.map((el: any) => {
+      const messagesList = messages.reverse().map((el: any) => {
         return (
           <div ref={scrollRef} key={`div${el._id}`}>
             {createMessage(el)}
@@ -312,7 +313,19 @@ const ChatScreen = ({ getSocket }: IChatScreen) => {
         </p>
       </div>
 
-      <div className="chat-screen-conversation">{messagesList}</div>
+      <div className="chat-screen-conversation">
+        <>
+          {messagesList?.length > 18 && (
+            <button
+              onClick={() => setPage((prevState) => prevState + 1)}
+              className="more-btn"
+            >
+              more
+            </button>
+          )}
+          {messagesList}
+        </>
+      </div>
       <div className="chat-screen-form-wrapper">
         <form
           action=""
